@@ -10,7 +10,6 @@ variable "transit_gateway_id" {
   type = string
 }
 
-variable "vpc_backroute_cidr" {
-  type    = list(string)
-  default = []
+variable "tgw_ram_id" {
+  type = string
 }

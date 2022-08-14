@@ -9,3 +9,7 @@ variable "transit_gateway_id" {
 variable "name" {
   type = string
 }
+
+variable "tgw_ram_id" {
+  type = string
+}
