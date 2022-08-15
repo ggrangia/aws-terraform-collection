@@ -5,23 +5,8 @@ module "spoke" {
   name      = "spoke1"
 
   transit_gateway_id = module.tgw.transit_gateway_id
-  tgw_ram_id = aws_ram_resource_association.tgw_org.id
+  tgw_ram_id = aws_ram_resource_association.tgw_org.id // Needed for depencies ordering
 }
-
-/*
-resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_tgw" {
-  subnet_ids                                      = module.spoke.tgw_subnets
-  transit_gateway_id                              = module.tgw.transit_gateway_id
-  vpc_id                                          = module.spoke.vpc.id
-  transit_gateway_default_route_table_propagation = false
-  transit_gateway_default_route_table_association = false
-
-  tags = {
-    Name = "Spoke Attachment"
-  }
-}
-*/
-
 
 resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "spoke" {
   provider = aws.tgw

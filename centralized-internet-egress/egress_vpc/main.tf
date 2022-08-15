@@ -112,3 +112,19 @@ resource "aws_route_table_association" "tgw" {
   route_table_id = aws_route_table.private.id
 }
 
+resource "aws_ec2_transit_gateway_vpc_attachment" "egress_tgw" {
+  subnet_ids                                      = [for s in aws_subnet.tgw_eni : s.id]
+  transit_gateway_id                              = var.transit_gateway_id
+  vpc_id                                          = aws_vpc.this.id
+  transit_gateway_default_route_table_propagation = false
+  transit_gateway_default_route_table_association = false
+
+  tags = {
+    Name = "Egress Attachment"
+  }
+
+  // Explicit dependency on RAM Resource association
+  depends_on = [
+    var.tgw_ram_id
+  ]
+}

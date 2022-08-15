@@ -66,9 +66,8 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_tgw" {
     Name = "Spoke Attachment"
   }
 
+  // Explicit dependency on RAM Resource association
   depends_on = [
     var.tgw_ram_id
   ]
-
-  // FIXME: dependent on ram share
 }

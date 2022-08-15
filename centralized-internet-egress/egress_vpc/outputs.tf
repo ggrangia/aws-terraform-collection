@@ -13,3 +13,7 @@ output "public_rt" {
 output "private_rt" {
   value = aws_route_table.private
 }
+
+output "tgw_vpc_attachment_id" {
+  value = aws_ec2_transit_gateway_vpc_attachment.egress_tgw.id
+}
