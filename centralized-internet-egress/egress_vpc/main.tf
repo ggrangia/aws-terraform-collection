@@ -75,7 +75,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "public-route-table"
+    Name = "egress-pub-rt"
   }
 }
 
@@ -83,7 +83,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "private-route-table"
+    Name = "egress-pvt-rt"
   }
 }
 

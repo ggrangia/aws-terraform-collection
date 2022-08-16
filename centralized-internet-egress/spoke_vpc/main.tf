@@ -4,7 +4,7 @@ resource "aws_vpc" "this" {
   enable_dns_support   = true
 
   tags = {
-    Name = var.name
+    Name = local.std_vpc_name
   }
 }
 
@@ -17,7 +17,7 @@ resource "aws_subnet" "pvt" {
   cidr_block        = each.value
 
   tags = {
-    Name = "sub-pvt-${each.key}"
+    Name = "${local.std_vpc_name}-pvt-${each.key}"
   }
 }
 
@@ -29,7 +29,7 @@ resource "aws_subnet" "tgw_eni" {
   cidr_block        = each.value
 
   tags = {
-    Name = "sub-pvt-tgw-${each.key}"
+    Name = "${local.std_vpc_name}-pvt-tgw-${each.key}"
   }
 }
 
@@ -38,7 +38,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "private-route-table"
+    Name = "${local.std_vpc_name}-pvt-rt"
   }
 }
 
@@ -63,7 +63,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_tgw" {
   transit_gateway_default_route_table_association = false
 
   tags = {
-    Name = "Spoke Attachment"
+    Name = "${local.std_vpc_name} Attachment"
   }
 
   // Explicit dependency on RAM Resource association

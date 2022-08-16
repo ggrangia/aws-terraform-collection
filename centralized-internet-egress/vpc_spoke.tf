@@ -2,7 +2,7 @@ module "spoke" {
   source = "./spoke_vpc"
 
   main_cidr = var.spoke_main_cidr
-  name      = "spoke1"
+  name      = "dev1"
 
   transit_gateway_id = module.tgw.transit_gateway_id
   tgw_ram_id = aws_ram_resource_association.tgw_org.id // Needed for depencies ordering
