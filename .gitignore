@@ -5,6 +5,8 @@
 *.tfstate
 *.tfstate.*
 
+
+*.bu
 # Terraform lock file
 .terraform.lock.*
 
