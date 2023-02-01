@@ -14,6 +14,7 @@ module "main_vpc" {
   public_subnets = ["100.64.0.0/28", "100.64.0.16/28", "100.64.0.32/28"]
 
   enable_nat_gateway = true
+  enable_dns_hostnames = true
 }
 
 resource "aws_security_group" "dns" {
@@ -27,7 +28,7 @@ resource "aws_security_group_rule" "dns_tcp_ingr" {
   from_port         = 53
   to_port           = 53
   protocol          = "tcp"
-  cidr_blocks       = [var.private_network_cidr]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.dns.id
 }
 
@@ -36,7 +37,16 @@ resource "aws_security_group_rule" "dns_udp_ingr" {
   from_port         = 53
   to_port           = 53
   protocol          = "udp"
-  cidr_blocks       = [var.private_network_cidr]
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.dns.id
+}
+
+resource "aws_security_group_rule" "dns_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = -1
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.dns.id
 }
 
@@ -109,6 +119,9 @@ resource "aws_route53_resolver_rule" "extra" {
     }
   }
 }
+
+// IMPORTANT: no need to associate my "main" domain resover rule with
+// the VPC where the Endpoints are hosted
 
 resource "aws_route53_resolver_rule_association" "extra" {
   for_each = { for rule in var.extra_fwd_rules : rule.name => rule }
