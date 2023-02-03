@@ -60,7 +60,7 @@ resource "aws_vpc_ipam_pool" "child_pub" {
 }
 
 resource "aws_vpc_ipam_pool_cidr" "child_pub" {
-  provider = aws.ipam  
+  provider = aws.ipam
 
   ipam_pool_id = aws_vpc_ipam_pool.child_pub.id
   cidr         = cidrsubnet(var.cidr_pool, 2, 1)

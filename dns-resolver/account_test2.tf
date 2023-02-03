@@ -18,7 +18,7 @@ module "account2_vpc" {
   # 100.64.0.0/26, spare: 100.64.0.48/28
   public_subnets = ["100.64.0.0/28", "100.64.0.16/28", "100.64.0.32/28"]
 
-  enable_nat_gateway = true
+  enable_nat_gateway   = true
   enable_dns_hostnames = true
 }
 resource "aws_route53_resolver_rule_association" "main_account2" {

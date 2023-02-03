@@ -5,7 +5,7 @@ module "egress" {
   public_cidr = var.egress_public_cidr
 
   transit_gateway_id = module.tgw.transit_gateway_id
-  tgw_ram_id = aws_ram_resource_association.tgw_org.id // Needed for depencies ordering
+  tgw_ram_id         = aws_ram_resource_association.tgw_org.id // Needed for depencies ordering
 }
 
 // FIXME: VPC security groups

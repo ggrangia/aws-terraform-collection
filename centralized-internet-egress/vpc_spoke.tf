@@ -5,7 +5,7 @@ module "spoke" {
   name      = "dev1"
 
   transit_gateway_id = module.tgw.transit_gateway_id
-  tgw_ram_id = aws_ram_resource_association.tgw_org.id // Needed for depencies ordering
+  tgw_ram_id         = aws_ram_resource_association.tgw_org.id // Needed for depencies ordering
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "spoke" {
