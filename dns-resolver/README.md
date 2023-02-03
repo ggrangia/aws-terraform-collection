@@ -26,3 +26,5 @@ I could have used a module for the two "support" accounts, but I skipped it for 
 Here I have everything defined in the same statefile, so I can access the resolver rules in the "support" accounts. In a real scenario, it is likely that they do not all live in the same statefile, hence a data lookup is be necessary.
 
 There is no need to associate the cloud domain resover rule with the VPC where the Endpoints are hosted. If you try, it will fail.
+
+IN the endpoints definition, the dynamic field might sometimes fail to show the plan correctly (it tells you it is going to change the IPs). If that happens, I suggest using a "known in advance" key (i.e. the azs in your region).
