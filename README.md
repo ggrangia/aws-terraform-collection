@@ -1,5 +1,5 @@
 # terraform-collection
-A collection of useful terraform snippets
+A collection of useful terraform tiny projects for your Organization
 
 ## List of snippets
 * Centralized Internet Egress: based on this(https://d1.awsstatic.com/architecture-diagrams/ArchitectureDiagrams/NAT-gateway-centralized-egress-ra.pdf?did=wp_card&trk=wp_card) solution on AWS Architecture Center
