@@ -5,10 +5,16 @@ variable "transit_gateway_rt_names" {
 
 variable "acc1_vpc" {
   description = "VPCs to be created on account 1"
-  type        = any
+  type = map(object({
+    cidr = string,
+    type = string,
+  }))
 }
 
 variable "acc2_vpc" {
   description = "VPCs to be created on account 2"
-  type        = any
+  type = map(object({
+    cidr = string,
+    type = string,
+  }))
 }
