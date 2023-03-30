@@ -44,3 +44,19 @@ provider "aws" {
     }
   }
 }
+
+provider "aws" {
+  alias      = "account2"
+  access_key = ""
+  secret_key = ""
+
+  region = "eu-west-1"
+
+  default_tags {
+    tags = {
+      Environment = "Dev"
+      Owner       = "ggrangia"
+      Alias       = "account2"
+    }
+  }
+}

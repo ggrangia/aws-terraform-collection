@@ -4,6 +4,11 @@ variable "transit_gateway_rt_names" {
 }
 
 variable "acc1_vpc" {
-  description = "VPCs tp be created on account 1"
+  description = "VPCs to be created on account 1"
+  type        = any
+}
+
+variable "acc2_vpc" {
+  description = "VPCs to be created on account 2"
   type        = any
 }
