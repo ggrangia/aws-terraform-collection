@@ -18,13 +18,13 @@ module "acc2" {
 
   private_subnets = [cidrsubnet(each.value["cidr"], 2, 0), cidrsubnet(each.value["cidr"], 2, 1), cidrsubnet(each.value["cidr"], 2, 2)]
   # Use the "spare" /26 to make 2 subenets that will host the tgw attachment
-  intra_subnets   = [cidrsubnet(cidrsubnet(each.value["cidr"], 2, 3), 2, 0), cidrsubnet(cidrsubnet(each.value["cidr"], 2, 3), 2, 1)]
+  intra_subnets = [cidrsubnet(cidrsubnet(each.value["cidr"], 2, 3), 2, 0), cidrsubnet(cidrsubnet(each.value["cidr"], 2, 3), 2, 1)]
   # Public is non-routable in our network, it will be re-used for every vpc
   # 100.64.0.0/26, spare: 100.64.0.48/28
   public_subnets = ["100.64.0.0/28", "100.64.0.16/28", "100.64.0.32/28"]
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway     = true
+  single_nat_gateway     = true
   one_nat_gateway_per_az = false
 
   enable_dns_hostnames = true
