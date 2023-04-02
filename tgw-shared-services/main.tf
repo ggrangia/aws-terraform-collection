@@ -44,3 +44,13 @@ resource "aws_ram_principal_association" "tgw_org" {
   principal          = data.aws_organizations_organization.mine.arn
   resource_share_arn = aws_ram_resource_share.tgw_org.arn
 }
+
+# Setup Global Network + register transit gateway
+resource "aws_networkmanager_global_network" "this" {
+  description = "My network manager"
+}
+
+resource "aws_networkmanager_transit_gateway_registration" "tgwthis" {
+  global_network_id   = aws_networkmanager_global_network.this.id
+  transit_gateway_arn = aws_ec2_transit_gateway.this.arn
+}
