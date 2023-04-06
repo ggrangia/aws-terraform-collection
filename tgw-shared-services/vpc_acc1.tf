@@ -39,6 +39,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "acc1" {
   depends_on = [
     aws_ram_principal_association.tgw_org,
     aws_ram_resource_association.tgw_org,
+    aws_networkmanager_transit_gateway_registration.tgwthis
   ]
 
   subnet_ids         = module.acc1[each.key].intra_subnets

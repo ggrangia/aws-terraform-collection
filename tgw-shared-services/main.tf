@@ -47,10 +47,14 @@ resource "aws_ram_principal_association" "tgw_org" {
 
 # Setup Global Network + register transit gateway
 resource "aws_networkmanager_global_network" "this" {
+  provider = aws.tgw
+
   description = "My network manager"
 }
 
 resource "aws_networkmanager_transit_gateway_registration" "tgwthis" {
+  provider = aws.tgw
+
   global_network_id   = aws_networkmanager_global_network.this.id
   transit_gateway_arn = aws_ec2_transit_gateway.this.arn
 }
