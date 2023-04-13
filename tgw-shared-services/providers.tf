@@ -30,6 +30,22 @@ provider "aws" {
 }
 
 provider "aws" {
+  alias      = "netmanager"
+  access_key = ""
+  secret_key = ""
+
+  region = "us-west-2"
+
+  default_tags {
+    tags = {
+      Environment = "Dev"
+      Owner       = "ggrangia"
+      Alias       = "netmanager"
+    }
+  }
+}
+
+provider "aws" {
   alias      = "account1"
   access_key = ""
   secret_key = ""

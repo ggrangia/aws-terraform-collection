@@ -2,22 +2,23 @@
   Build the VPCs in account1 and make the Transit Gateway attachments  
 */
 
-module "acc1" {
+module "acc2" {
   source = "terraform-aws-modules/vpc/aws"
 
-  for_each = var.acc1_vpc
+  for_each = var.acc2_vpc
 
   providers = {
-    aws = aws.account1
+    aws = aws.account2
   }
 
-  name = each.key
-  cidr = each.value["cidr"]
+  name                  = each.key
+  cidr                  = each.value["cidr"]
+  secondary_cidr_blocks = ["100.64.0.0/26"]
 
   azs = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
 
   private_subnets = [cidrsubnet(each.value["cidr"], 2, 0), cidrsubnet(each.value["cidr"], 2, 1), cidrsubnet(each.value["cidr"], 2, 2)]
-  # Use the "spare" /26 to make 2 subenets that will host the tgw attachment
+  # Use the "spare" /26 to make 2 subnets that will host the tgw attachment
   intra_subnets = [cidrsubnet(cidrsubnet(each.value["cidr"], 2, 3), 2, 0), cidrsubnet(cidrsubnet(each.value["cidr"], 2, 3), 2, 1)]
   # Public is non-routable in our network, it will be re-used for every vpc
   # 100.64.0.0/26, spare: 100.64.0.48/28
@@ -31,20 +32,21 @@ module "acc1" {
 }
 
 
-resource "aws_ec2_transit_gateway_vpc_attachment" "acc1" {
-  provider = aws.account1
+resource "aws_ec2_transit_gateway_vpc_attachment" "acc2" {
+  provider = aws.account2
 
-  for_each = var.acc1_vpc
+  for_each = var.acc2_vpc
 
   depends_on = [
     aws_ram_principal_association.tgw_org,
     aws_ram_resource_association.tgw_org,
-    aws_networkmanager_transit_gateway_registration.tgwthis
+    aws_networkmanager_transit_gateway_registration.tgwthis,
+    aws_cloudwatch_event_target.example
   ]
 
-  subnet_ids         = module.acc1[each.key].intra_subnets
+  subnet_ids         = module.acc2[each.key].intra_subnets
   transit_gateway_id = aws_ec2_transit_gateway.this.id
-  vpc_id             = module.acc1[each.key].vpc_id
+  vpc_id             = module.acc2[each.key].vpc_id
 
   tags = {
     Name = each.key
