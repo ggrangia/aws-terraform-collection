@@ -12,7 +12,7 @@ resource "aws_sns_topic_subscription" "user_updates_sqs_target" {
 
   topic_arn = aws_sns_topic.network_manager.arn
   protocol  = "lambda"
-  endpoint  = module.lambda_tgw_accept_attachment.lambda_function_arn
+  endpoint  = module.lambda_tgw_rt_propagation.lambda_function_arn
 }
 
 resource "aws_iam_role" "sns_logs" {
