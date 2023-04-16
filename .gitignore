@@ -36,3 +36,6 @@ override.tf.json
 # Any python virtual env
 **/env/*
 **/builds/*
+
+
+**/__pycache__/**
