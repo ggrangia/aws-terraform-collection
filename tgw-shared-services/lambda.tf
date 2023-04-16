@@ -6,7 +6,7 @@ module "lambda_tgw_rt_propagation" {
   handler       = "index.lambda_handler"
   runtime       = "python3.9"
 
-  source_path = "./lambdas_code/tgw_association/index.py"
+  source_path = "./lambdas_code/tgw_rt_propagation/index.py"
 
   layers = [
     "arn:aws:lambda:eu-west-1:017000801446:layer:AWSLambdaPowertoolsPythonV2:26",
