@@ -1,35 +1,70 @@
+"""
+The attachment type will drive the propagation.
+(propagating an attachment defines "who" can reach it)
+East-west traffic is not allowed for Standard VPCs, that is why
+Standard_X are not propagated to the route table with the same name
+*****************************************************************************
+    Type                 |    Propagations
+*****************************************************************************
+Standard_NonProd         | Shared_Services_NonProd, Global
+-----------------------------------------------------------------------------
+Standard_Prod            | Shared_Services_Prod, Global
+-----------------------------------------------------------------------------
+Shared_Services_NonProd  | Standard_NonProd, Shared_Services_NonProd, Global
+-----------------------------------------------------------------------------
+Shared_Services_Prod     | Standard_Prod, Shared_Services_Prod, Global
+-----------------------------------------------------------------------------
+Global                   | All
+*****************************************************************************
+"""
+
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 import json
+import os
 from boto3 import client
 
 logger = Logger()
 
-# TODO:: Add tests
-
 ec2_client = client("ec2")
-sts_client = client("sts")
 
 
-# FIXME: Pass correct role. From env??? Role to be created (in every account)
-def getTargetAccountClient(accountId, sts, sessionName="TGW-RT-PROP"):
-    targetAccCred = sts.assume_role(RoleArn="", RoleSessionName=sessionName)
-    return client(
-        "ec2",
-        aws_access_key_id=targetAccCred["Credentials"]["AccessKeyId"],
-        aws_secret_access_key=targetAccCred["Credentials"]["SecretAccessKey"],
-        aws_session_token=targetAccCred["Credentials"]["SessionToken"],
+propagation_map = {
+    "Standard_NonProd": ["Global", "Shared_Services_NonProd"],
+    "Standard_Prod": ["Global", "Shared_Services_Prod"],
+    "Shared_Services_NonProd": [
+        "Global",
+        "Shared_Services_NonProd",
+        "Standard_NonProd",
+    ],
+    "Shared_Services_Prod": ["Global", "Shared_Services_Prod", "Standard_Prod"],
+    "Global": [
+        "Global",
+        "Shared_Services_Prod",
+        "Standard_Prod",
+        "Shared_Services_NonProd",
+        "Standard_NonProd",
+    ],
+}
+
+
+def getTagValue(tagsList, tagKey):
+    return next((x["Value"] for x in tagsList if x["Key"] == tagKey), False)
+
+
+def propagateAttachment(client, rtId, attachId):
+    response = client.enable_transit_gateway_route_table_propagation(
+        TransitGatewayRouteTableId=rtId, TransitGatewayAttachmentId=attachId
     )
+    return response
 
 
-def describeVpc(vpcId, ec2):
-    return ec2.describe_vpcs(
-        VpcIds=[
-            vpcId,
-        ]
-    )[
-        "Vpcs"
-    ][0]
+def associateAttachment(client, rtId, attachId):
+    response = client.associate_transit_gateway_route_table(
+        TransitGatewayRouteTableId=rtId,
+        TransitGatewayAttachmentId=attachId,
+    )
+    return response
 
 
 @logger.inject_lambda_context
@@ -53,18 +88,16 @@ def lambda_handler(event: dict, context: LambdaContext):
     if tgwAttachObj["State"] != "available" or tgwAttachObj["ResourceType"] != "vpc":
         logger.error(f"Attachment is in invalid state: {tgwAttachObj}")
 
-    attachName = next(
-        (x["Value"] for x in tgwAttachObj["Tags"] if x["Key"] == "Name"), False
-    )
-    if not attachName:
-        logger.error(f"Cannot find attachment name: {tgwAttachObj}")
+    attachType = getTagValue(tgwAttachObj["Tags"], "Type")
 
-    vpcId = tgwAttachObj["ResourceId"]
-    vpcOwner = tgwAttachObj["ResourceOwnerId"]
+    if not attachType:
+        logger.error(f"Cannot find attachment Type: {tgwAttachObj}")
 
-    vpcObj = describeVpc(vpcId, getTargetAccountClient(vpcOwner, sts_client))
+    # TRT association and propagation based on the extracted tag (Type)
+    for rtNames in propagation_map[attachType]:
+        propagateAttachment(ec2_client, os.environ[rtNames], tgwAttachId)
 
-    # TODO: Extract RT info from attachment tags
-    # TODO: Do RT association and propagation based on the extracted tag
+    # associate the attachment with the RT specified in Type tag
+    associateAttachment(ec2_client, os.environ[attachType], tgwAttachId)
 
     return True

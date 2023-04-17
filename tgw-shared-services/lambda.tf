@@ -11,7 +11,8 @@ module "lambda_tgw_rt_propagation" {
   layers = [
     "arn:aws:lambda:eu-west-1:017000801446:layer:AWSLambdaPowertoolsPythonV2:26",
   ]
-
+  environment_variables = local.tgw_rt_prop_lambda_env
+  
   tags = {
     Name = "tgw_rt_propagation"
   }
