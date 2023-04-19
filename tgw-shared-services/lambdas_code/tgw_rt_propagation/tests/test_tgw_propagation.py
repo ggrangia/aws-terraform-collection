@@ -136,5 +136,63 @@ class TestTgwPropagation:
 
             assert prop_count == len(propagation_map[attachType])
 
-    def test_associateAttachment(self):
-        assert False
+    def test_associateAttachment(self, setup_tgw):
+        client = setup_tgw["client"]
+        testCases = [
+            {
+                "Name": "VpcGlobal",
+                "TgwId": setup_tgw["transit_gateway_id"],
+                "Cidr": "10.10.0.0/24",
+                "AttachmentType": "Global",
+            },
+            {
+                "Name": "VpcStandard_NonProd",
+                "TgwId": setup_tgw["transit_gateway_id"],
+                "Cidr": "10.10.1.0/24",
+                "AttachmentType": "Standard_NonProd",
+            },
+            {
+                "Name": "VpcStandard_Prod",
+                "TgwId": setup_tgw["transit_gateway_id"],
+                "Cidr": "10.10.2.0/24",
+                "AttachmentType": "Standard_Prod",
+            },
+            {
+                "Name": "VpcShared_Services_NonProd",
+                "TgwId": setup_tgw["transit_gateway_id"],
+                "Cidr": "10.10.3.0/24",
+                "AttachmentType": "Shared_Services_NonProd",
+            },
+            {
+                "Name": "VpcShared_Services_Prod",
+                "TgwId": setup_tgw["transit_gateway_id"],
+                "Cidr": "10.10.4.0/24",
+                "AttachmentType": "Shared_Services_Prod",
+            },
+        ]
+        for case in testCases:
+            attachType = case["AttachmentType"]
+            attachmentId = self.setup_vpc_and_attachment(client, case)
+            associateAttachment(client, os.environ[attachType], attachmentId)
+            associationsCount = 0
+            for name in setup_tgw["routeTableNames"]:
+                rtId = os.environ[name]
+                response = client.get_transit_gateway_route_table_associations(
+                    TransitGatewayRouteTableId=rtId,
+                    Filters=[
+                        {
+                            "Name": "transit-gateway-attachment-id",
+                            "Values": [
+                                attachmentId,
+                            ],
+                        },
+                    ],
+                )
+                # print(response["Associations"])
+                if len(response["Associations"]) and response["Associations"][0].get(
+                    "TransitGatewayAttachmentId"
+                ):
+                    associationsCount += 1
+                    assert name == attachType
+
+            assert associationsCount == 1
