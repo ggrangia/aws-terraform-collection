@@ -56,8 +56,8 @@ def propagateAttachment(client, attachId, propagation_list):
     for rtNames in propagation_list:
         rtId = os.environ[rtNames]
         client.enable_transit_gateway_route_table_propagation(
-        TransitGatewayRouteTableId=rtId, TransitGatewayAttachmentId=attachId
-    )
+            TransitGatewayRouteTableId=rtId, TransitGatewayAttachmentId=attachId
+        )
 
 
 def associateAttachment(client, rtId, attachId):
@@ -81,7 +81,7 @@ def lambda_handler(event: dict, context: LambdaContext):
         ]
     )
     if len(tgwAttachResp["TransitGatewayAttachments"]) != 1:
-        logger.error(f"Too many attachments found: {tgwAttachResp}")
+        logger.error(f"Expecting exactly 1 Transit Gateway Attachment: {tgwAttachResp}")
         return False
 
     tgwAttachObj = tgwAttachResp["TransitGatewayAttachments"][0]
@@ -93,6 +93,7 @@ def lambda_handler(event: dict, context: LambdaContext):
 
     if not attachType:
         logger.error(f"Cannot find attachment Type: {tgwAttachObj}")
+        return False
 
     # TRT association and propagation based on the extracted tag (Type)
     propagateAttachment(ec2_client, tgwAttachId, propagation_map[attachType])
