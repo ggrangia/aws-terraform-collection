@@ -1,4 +1,9 @@
-from index import getTagValue, lambda_handler, associateAttachment, propagateAttachment
+from index import (
+    getTagValue,
+    lambda_handler,
+    associate_attachment,
+    propagate_attachment,
+)
 from index import propagation_map
 import os, json
 
@@ -171,7 +176,7 @@ class TestTgwPropagation:
             )
             assert resp == True
 
-    def test_getTagValue(self):
+    def test_get_tag_value(self):
         tags = [
             {"Key": "test1", "Value": "test"},
             {"Key": "Type", "Value": "attachment_type"},
@@ -183,7 +188,7 @@ class TestTgwPropagation:
         assert name == "Global"
         assert typeTag == "attachment_type"
 
-    def test_propagateAttachment(self, setup_tgw):
+    def test_propagate_attachment(self, setup_tgw):
         client = setup_tgw["client"]
         testCases = [
             {
@@ -220,13 +225,13 @@ class TestTgwPropagation:
         for case in testCases:
             attachType = case["AttachmentType"]
             attachmentId = self.setup_vpc_and_attachment(client, case)
-            propagateAttachment(client, attachmentId, propagation_map[attachType])
+            propagate_attachment(client, attachmentId, propagation_map[attachType])
             # Check the propagated RT is in the propagation list
             self.propagation_assertions(
                 client, setup_tgw["routeTableNames"], attachmentId, attachType
             )
 
-    def test_associateAttachment(self, setup_tgw):
+    def test_associate_attachment(self, setup_tgw):
         client = setup_tgw["client"]
         testCases = [
             {
@@ -263,7 +268,7 @@ class TestTgwPropagation:
         for case in testCases:
             attachmentId = self.setup_vpc_and_attachment(client, case)
             attachType = case["AttachmentType"]
-            associateAttachment(client, os.environ[attachType], attachmentId)
+            associate_attachment(client, os.environ[attachType], attachmentId)
             self.association_assertions(
                 client, setup_tgw["routeTableNames"], attachmentId, attachType
             )

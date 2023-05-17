@@ -52,7 +52,7 @@ def getTagValue(tagsList, tagKey):
     return next((x["Value"] for x in tagsList if x["Key"] == tagKey), False)
 
 
-def propagateAttachment(client, attachId, propagation_list):
+def propagate_attachment(client, attachId, propagation_list):
     for rtNames in propagation_list:
         rtId = os.environ[rtNames]
         client.enable_transit_gateway_route_table_propagation(
@@ -60,7 +60,7 @@ def propagateAttachment(client, attachId, propagation_list):
         )
 
 
-def associateAttachment(client, rtId, attachId):
+def associate_attachment(client, rtId, attachId):
     response = client.associate_transit_gateway_route_table(
         TransitGatewayRouteTableId=rtId,
         TransitGatewayAttachmentId=attachId,
@@ -96,9 +96,9 @@ def lambda_handler(event: dict, context: LambdaContext):
         return False
 
     # TRT association and propagation based on the extracted tag (Type)
-    propagateAttachment(ec2_client, tgwAttachId, propagation_map[attachType])
+    propagate_attachment(ec2_client, tgwAttachId, propagation_map[attachType])
 
     # associate the attachment with the RT specified in Type tag
-    associateAttachment(ec2_client, os.environ[attachType], tgwAttachId)
+    associate_attachment(ec2_client, os.environ[attachType], tgwAttachId)
 
     return True
