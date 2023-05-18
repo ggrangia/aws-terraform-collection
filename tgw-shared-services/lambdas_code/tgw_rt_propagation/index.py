@@ -58,6 +58,7 @@ def propagate_attachment(client, attachId, propagation_list):
         client.enable_transit_gateway_route_table_propagation(
             TransitGatewayRouteTableId=rtId, TransitGatewayAttachmentId=attachId
         )
+        logger.info(f"Propagated {attachId} to {rtNames} ({rtId})")
 
 
 def associate_attachment(client, rtId, attachId):
@@ -65,6 +66,7 @@ def associate_attachment(client, rtId, attachId):
         TransitGatewayRouteTableId=rtId,
         TransitGatewayAttachmentId=attachId,
     )
+    logger.info(f"Associated {rtId} with {attachId}")
     return response
 
 
@@ -97,10 +99,14 @@ def lambda_handler(event: dict, context: LambdaContext):
         logger.error(f"Cannot find attachment Type: {tgwAttachObj}")
         raise NameError(f"Cannot find attachment Type: {tgwAttachObj}")
 
+    logger.info(f"Found Attachment Type: {attachType}")
+
     # TRT association and propagation based on the extracted tag (Type)
     propagate_attachment(ec2_client, tgwAttachId, propagation_map[attachType])
 
     # associate the attachment with the RT specified in Type tag
     associate_attachment(ec2_client, os.environ[attachType], tgwAttachId)
+
+    logger.info("Assocation and Propagation completed")
 
     return True
