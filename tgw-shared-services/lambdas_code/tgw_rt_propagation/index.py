@@ -82,7 +82,9 @@ def lambda_handler(event: dict, context: LambdaContext):
     )
     if len(tgwAttachResp["TransitGatewayAttachments"]) != 1:
         logger.error(f"Expecting exactly 1 Transit Gateway Attachment: {tgwAttachResp}")
-        return False
+        raise ValueError(
+            f"Expecting exactly 1 Transit Gateway Attachment: {tgwAttachResp}"
+        )
 
     tgwAttachObj = tgwAttachResp["TransitGatewayAttachments"][0]
 
@@ -93,7 +95,7 @@ def lambda_handler(event: dict, context: LambdaContext):
 
     if not attachType:
         logger.error(f"Cannot find attachment Type: {tgwAttachObj}")
-        return False
+        raise NameError(f"Cannot find attachment Type: {tgwAttachObj}")
 
     # TRT association and propagation based on the extracted tag (Type)
     propagate_attachment(ec2_client, tgwAttachId, propagation_map[attachType])

@@ -6,6 +6,7 @@ from index import (
 )
 from index import propagation_map
 import os, json
+import pytest
 
 
 class ContextMock:
@@ -20,6 +21,20 @@ class ContextMock:
 
 
 class TestTgwPropagation:
+    def tag_attachment_type(self, client, attachmentId, attachment_type):
+        # Add Tags explicitly
+        client.create_tags(
+            Resources=[
+                attachmentId,
+            ],
+            Tags=[
+                {
+                    "Key": "Type",
+                    "Value": attachment_type,
+                },
+            ],
+        )
+
     def setup_vpc_and_attachment(self, client, vpcInfo):
         vpc = client.create_vpc(
             CidrBlock=vpcInfo["Cidr"],
@@ -64,18 +79,6 @@ class TestTgwPropagation:
         attachmentId = attachment["TransitGatewayVpcAttachment"][
             "TransitGatewayAttachmentId"
         ]
-        # Add Tags explicitly
-        client.create_tags(
-            Resources=[
-                attachmentId,
-            ],
-            Tags=[
-                {
-                    "Key": "Type",
-                    "Value": vpcInfo["AttachmentType"],
-                },
-            ],
-        )
         return attachmentId
 
     def association_assertions(self, client, routeTableNames, attachmentId, attachType):
@@ -162,12 +165,13 @@ class TestTgwPropagation:
             },
         ]
         for case in testCases:
+            attachType = case["AttachmentType"]
             attachmentId = self.setup_vpc_and_attachment(client, case)
+            self.tag_attachment_type(client, attachmentId, attachType)
             eventMsgObj = {"detail": {"transitGatewayAttachmentArn": f"{attachmentId}"}}
             event = {"Records": [{"Sns": {"Message": json.dumps(eventMsgObj)}}]}
             resp = lambda_handler(event, ctx)
             # Test both propagation and association are correct
-            attachType = case["AttachmentType"]
             self.association_assertions(
                 client, setup_tgw["routeTableNames"], attachmentId, attachType
             )
@@ -175,6 +179,24 @@ class TestTgwPropagation:
                 client, setup_tgw["routeTableNames"], attachmentId, attachType
             )
             assert resp == True
+
+    def test_lambda_handler_no_tag(self, setup_tgw):
+        ctx = ContextMock()
+        client = setup_tgw["client"]
+
+        test_case = {
+            "Name": "VpcShared_Services_Prod",
+            "TgwId": setup_tgw["transit_gateway_id"],
+            "Cidr": "10.10.4.0/24",
+            "AttachmentType": "Shared_Services_Prod",
+        }
+
+        attachmentId = self.setup_vpc_and_attachment(client, test_case)
+        # Do not tag the attachment
+        eventMsgObj = {"detail": {"transitGatewayAttachmentArn": f"{attachmentId}"}}
+        event = {"Records": [{"Sns": {"Message": json.dumps(eventMsgObj)}}]}
+        with pytest.raises(NameError):
+            lambda_handler(event, ctx)
 
     def test_get_tag_value(self):
         tags = [
@@ -225,6 +247,7 @@ class TestTgwPropagation:
         for case in testCases:
             attachType = case["AttachmentType"]
             attachmentId = self.setup_vpc_and_attachment(client, case)
+            self.tag_attachment_type(client, attachmentId, attachType)
             propagate_attachment(client, attachmentId, propagation_map[attachType])
             # Check the propagated RT is in the propagation list
             self.propagation_assertions(
@@ -268,6 +291,7 @@ class TestTgwPropagation:
         for case in testCases:
             attachmentId = self.setup_vpc_and_attachment(client, case)
             attachType = case["AttachmentType"]
+            self.tag_attachment_type(client, attachmentId, attachType)
             associate_attachment(client, os.environ[attachType], attachmentId)
             self.association_assertions(
                 client, setup_tgw["routeTableNames"], attachmentId, attachType
