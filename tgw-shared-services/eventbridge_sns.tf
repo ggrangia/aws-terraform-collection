@@ -50,3 +50,59 @@ data "aws_iam_policy_document" "trusted_entity_sns_logs" {
     }
   }
 }
+
+resource "aws_sns_topic_policy" "eventbridge" {
+  provider = aws.netmanager
+  arn      = aws_sns_topic.network_manager.arn
+
+  policy = data.aws_iam_policy_document.sns_topic_policy.json
+}
+
+# Allow events to Publish to SNS
+data "aws_iam_policy_document" "sns_topic_policy" {
+  provider  = aws.netmanager
+  policy_id = "__default_policy_ID"
+
+  statement {
+    sid    = "__default_statement_ID"
+    effect = "Allow"
+
+    actions = [
+      "SNS:Subscribe",
+      "SNS:SetTopicAttributes",
+      "SNS:RemovePermission",
+      "SNS:Receive",
+      "SNS:Publish",
+      "SNS:ListSubscriptionsByTopic",
+      "SNS:GetTopicAttributes",
+      "SNS:DeleteTopic",
+      "SNS:AddPermission",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceOwner"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    resources = [aws_sns_topic.network_manager.arn]
+  }
+
+  statement {
+    sid     = "AWSEvents_capture-autoscaling-events_SendToSNS"
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+
+    resources = [aws_sns_topic.network_manager.arn]
+  }
+}
