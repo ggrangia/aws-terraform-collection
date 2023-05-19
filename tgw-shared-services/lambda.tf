@@ -12,12 +12,27 @@ module "lambda_tgw_rt_propagation" {
     "arn:aws:lambda:eu-west-1:017000801446:layer:AWSLambdaPowertoolsPythonV2:26",
   ]
   environment_variables = local.tgw_rt_prop_lambda_env
-  
+
+  attach_policy_json = true
+  policy_json = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ec2:DescribeTransitGatewayAttachments",
+          "ec2:EnableTransitGatewayRouteTablePropagation",
+          "ec2:AssociateTransitGatewayRouteTable",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+
   tags = {
     Name = "tgw_rt_propagation"
   }
 }
-
 
 resource "aws_lambda_permission" "sns_network_manager" {
   statement_id_prefix = "sns_network_manager"
