@@ -2,13 +2,13 @@
   Build the VPCs in account1 and make the Transit Gateway attachments  
 */
 
-module "acc2" {
+module "acc1" {
   source = "terraform-aws-modules/vpc/aws"
 
-  for_each = var.acc2_vpc
+  for_each = var.acc1_vpc
 
   providers = {
-    aws = aws.account2
+    aws = aws.account1
   }
 
   name                  = each.key
@@ -29,25 +29,43 @@ module "acc2" {
   one_nat_gateway_per_az = false
 
   enable_dns_hostnames = true
+
+  depends_on = [
+    aws_cloudwatch_event_target.vpc_attachment_created_sns,
+  ]
 }
 
 
-resource "aws_ec2_transit_gateway_vpc_attachment" "acc2" {
-  provider = aws.account2
+resource "aws_ec2_transit_gateway_vpc_attachment" "acc1" {
+  provider = aws.account1
 
-  for_each = var.acc2_vpc
+  for_each = var.acc1_vpc
 
   depends_on = [
     aws_ram_principal_association.tgw_org,
     aws_ram_resource_association.tgw_org,
     aws_networkmanager_transit_gateway_registration.tgwthis,
-    aws_cloudwatch_event_target.example
+    aws_cloudwatch_event_target.vpc_attachment_created_log_group
   ]
 
-  subnet_ids         = module.acc2[each.key].intra_subnets
+  subnet_ids         = module.acc1[each.key].intra_subnets
   transit_gateway_id = aws_ec2_transit_gateway.this.id
-  vpc_id             = module.acc2[each.key].vpc_id
+  vpc_id             = module.acc1[each.key].vpc_id
 
+  tags = {
+    Name = each.key
+    Type = each.value["type"]
+  }
+}
+
+resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "acc1" {
+  provider = aws.tgw
+
+  for_each = var.acc1_vpc
+
+  transit_gateway_attachment_id = aws_ec2_transit_gateway_vpc_attachment.acc1[each.key].id
+
+  # It is important to tag the attachment also on TGW side otherwise the lambda function will fail
   tags = {
     Name = each.key
     Type = each.value["type"]
