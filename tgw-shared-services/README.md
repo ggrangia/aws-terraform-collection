@@ -18,7 +18,7 @@ To put it simply, propagating an attachment to a Transint Gateway route table me
 from all the attachment associated with that route table.
 
 | Type | Progagations |
-| --- | --- |
+| :---: | :---: |
 | Standard_NonProd | Shared_Services_NonProd, Global |
 | Standard_Prod | Shared_Services_Prod, Global |
 | Shared_Services_NonProd | Standard_NonProd, Shared_Services_NonProd, Global |
