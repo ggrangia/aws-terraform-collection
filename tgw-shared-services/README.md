@@ -25,8 +25,7 @@ from all the attachment associated with that route table.
 | Shared_Services_Prod | Standard_Prod, Shared_Services_Prod, Global |
 | Global | All |
 
-As a reminder, in production environments I strongly suggest to separate the transit gateway and the VPCs codes.
-With this project, you will incur into error when you are destroying everything because terraform tries to destroy
-Transit Gateway Route Table where the propagations and associations have been done via lambda functions.
-Keeping the code separated (into different statefiles), you will easily delete VPCs and automatically delete the propagation.
-It is unusual to destroy and re-create transit gateway and route tables very often.
+It is important that all the different "stacks" are depoyed in order.
+You should check that the providers are correctly configured. 3 accounts are needed for this project:
+- 1 account will host Transit Gateway code
+- 2 accounts will host the VPCs
