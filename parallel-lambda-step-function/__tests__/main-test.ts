@@ -1,89 +1,53 @@
-// Copyright (c) HashiCorp, Inc
-// SPDX-License-Identifier: MPL-2.0
 import "cdktf/lib/testing/adapters/jest"; // Load types for expect matchers
-// import { Testing } from "cdktf";
+import { Testing } from "cdktf";
+import { StepFunctionIamRole } from "../iam";
+import { MyStack } from "../mystack";
+import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
+import { SfnStateMachine } from "@cdktf/provider-aws/lib/sfn-state-machine";
+import { IamRole } from "@cdktf/provider-aws/lib/iam-role";
 
 describe("My CDKTF Application", () => {
-  // The tests below are example tests, you can find more information at
   // https://cdk.tf/testing
-  it.todo("should be tested");
 
-  // // All Unit tests test the synthesised terraform code, it does not create real-world resources
-  // describe("Unit testing using assertions", () => {
-  //   it("should contain a resource", () => {
-  //     // import { Image,Container } from "./.gen/providers/docker"
-  //     expect(
-  //       Testing.synthScope((scope) => {
-  //         new MyApplicationsAbstraction(scope, "my-app", {});
-  //       })
-  //     ).toHaveResource(Container);
+  let mystack: MyStack;
+  let synthStack: string;
+  let synthFull: string;
 
-  //     expect(
-  //       Testing.synthScope((scope) => {
-  //         new MyApplicationsAbstraction(scope, "my-app", {});
-  //       })
-  //     ).toHaveResourceWithProperties(Image, { name: "ubuntu:latest" });
-  //   });
-  // });
+  beforeAll(() => {
+    const app = Testing.app();
+    mystack = new MyStack(app, "test_stack");
+    synthStack = Testing.synth(mystack);
+    synthFull = Testing.fullSynth(mystack);
+  });
 
-  // describe("Unit testing using snapshots", () => {
-  //   it("Tests the snapshot", () => {
-  //     const app = Testing.app();
-  //     const stack = new TerraformStack(app, "test");
+  it("check terraform configuration is valid", () => {
+    expect(synthFull).toBeValidTerraform();
+  });
 
-  //     new TestProvider(stack, "provider", {
-  //       accessKey: "1",
-  //     });
+  it("check if AWS Provider is included", () => {
+    expect(synthStack).toHaveProvider(AwsProvider);
+  });
 
-  //     new TestResource(stack, "test", {
-  //       name: "my-resource",
-  //     });
+  it("check if State Function is generated", () => {
+    expect(synthStack).toHaveResource(SfnStateMachine);
+  });
 
-  //     expect(Testing.synth(stack)).toMatchSnapshot();
-  //   });
+  /*
+  it("check if the produced terraform configuration is planing successfully", () => {
+    const app = Testing.app();
+    const stack = new MyStack(app, "test");
+    expect(Testing.fullSynth(stack)).toPlanSuccessfully();
+  });
+*/
+  describe("Unit testing using assertions", () => {
+    const stack = Testing.synthScope((scope) => {
+      new StepFunctionIamRole(scope, "my-app-under-test", "lambdaArn");
+    });
 
-  //   it("Tests a combination of resources", () => {
-  //     expect(
-  //       Testing.synthScope((stack) => {
-  //         new TestDataSource(stack, "test-data-source", {
-  //           name: "foo",
-  //         });
-
-  //         new TestResource(stack, "test-resource", {
-  //           name: "bar",
-  //         });
-  //       })
-  //     ).toMatchInlineSnapshot();
-  //   });
-  // });
-
-  // describe("Checking validity", () => {
-  //   it("check if the produced terraform configuration is valid", () => {
-  //     const app = Testing.app();
-  //     const stack = new TerraformStack(app, "test");
-
-  //     new TestDataSource(stack, "test-data-source", {
-  //       name: "foo",
-  //     });
-
-  //     new TestResource(stack, "test-resource", {
-  //       name: "bar",
-  //     });
-  //     expect(Testing.fullSynth(app)).toBeValidTerraform();
-  //   });
-
-  //   it("check if this can be planned", () => {
-  //     const app = Testing.app();
-  //     const stack = new TerraformStack(app, "test");
-
-  //     new TestDataSource(stack, "test-data-source", {
-  //       name: "foo",
-  //     });
-
-  //     new TestResource(stack, "test-resource", {
-  //       name: "bar",
-  //     });
-  //     expect(Testing.fullSynth(app)).toPlanSuccessfully();
-  //   });
-  // });
+    it("should contain a resource", () => {
+      expect(stack).toHaveResourceWithProperties(IamRole, {
+        name: "snfRole",
+      });
+    });
+  });
 });
