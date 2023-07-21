@@ -1,5 +1,7 @@
 This project is a simple example of how to perform a set of operations (Lambda function) in parallel thanks to Step Function Map workflow. The code is written is cdktf with very minimal test setup.
 
+![Step Function](/parallel-lambda-step-function/img/stepFuncMap.jpg)
+
 ## Deployed Resources
 
 The following resources will be deployed:
