@@ -8,4 +8,4 @@ A collection of useful terraform tiny projects for your Organization
 - **Multi-account DNS resolution**: [Simplify DNS management in a multi-account environment with Route 53 Resolver](https://aws.amazon.com/blogs/security/simplify-dns-management-in-a-multiaccount-environment-with-route-53-resolver/)
 - **ipam-vpc**: deploys a VPC (with public and private subnets) using AWS IPAM to manage CIDRs
 - **tgw-shared_services**: Selectively route traffic across your Organizations via Transit Gateway (Route Table Associations and attachments Propagations)
-- **Map Step Function **: (parallel-lambda-step-function) perform a set of operations (Lambda function) in parallel thanks to Step Function Map workflow
+- **Map Step Function**: (parallel-lambda-step-function) perform a set of operations (Lambda function) in parallel thanks to Step Function Map workflow
