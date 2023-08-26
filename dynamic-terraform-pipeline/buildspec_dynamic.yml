@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+  build:
+    commands:
+      - echo `ls`
+      - echo Build started on `date`
+      - echo Checking python 3.11
+  post_build:
+    commands:
+      - echo Build completed on `date`
