@@ -1,10 +1,10 @@
 resource "aws_codedeploy_app" "client" {
   compute_platform = "ECS"
-  name             = "client_app"
+  name             = var.codedeploy_app_name
 }
 
 resource "aws_codedeploy_deployment_config" "client_config" {
-  deployment_config_name = "client_app"
+  deployment_config_name = var.codedeploy_app_name
   compute_platform       = "ECS"
 
   traffic_routing_config {
@@ -15,7 +15,7 @@ resource "aws_codedeploy_deployment_config" "client_config" {
 resource "aws_codedeploy_deployment_group" "client_deployment_group" {
   app_name               = aws_codedeploy_app.client.name
   deployment_config_name = aws_codedeploy_deployment_config.client_config.deployment_config_name
-  deployment_group_name  = "client_app"
+  deployment_group_name  = var.codedeploy_app_name
   service_role_arn       = aws_iam_role.codedeploy.arn
 
   ecs_service {

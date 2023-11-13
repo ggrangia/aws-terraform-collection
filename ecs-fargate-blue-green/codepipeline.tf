@@ -82,7 +82,7 @@ resource "aws_codepipeline" "codepipeline" {
       // https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html
       configuration = {
         ApplicationName                = aws_codedeploy_app.client.name
-        DeploymentGroupName            = "client_app" //aws_codedeploy_deployment_group.client_deployment_group.id
+        DeploymentGroupName            = var.codedeploy_app_name
         AppSpecTemplateArtifact        = "build_output"
         AppSpecTemplatePath            = "appspec.yml"
         TaskDefinitionTemplateArtifact = "build_output"
