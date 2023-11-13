@@ -1,0 +1,33 @@
+[
+  {
+    "name": "client",
+    "image": "nicholasjackson/fake-service:v0.23.1",
+    "essential": true,
+    "cpu": 0,
+    "portMappings": [
+      {
+        "containerPort": 9090,
+        "hostPort": 9090,
+        "protocol": "tcp"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/aws/ecs/client_lg",
+        "awslogs-region": "us-east-1",
+        "awslogs-stream-prefix": "ecs"
+      }
+    },
+    "environment": [
+      {
+        "name": "NAME",
+        "value": "client"
+      },
+      {
+        "name": "MESSAGE",
+        "value": "Hello World from the client blue!"
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: <TASK_DEFINITION>
+        LoadBalancerInfo:
+          ContainerName: "client"
+          #ContainerPort: 80 # nginx
+          ContainerPort: 9090 # for fake service
+Hooks:
+  - AfterAllowTestTraffic: "after_allow_test_hook"
