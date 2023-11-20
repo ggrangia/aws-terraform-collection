@@ -1,5 +1,5 @@
 {
-  "executionRoleArn": "arn:aws:iam::303446724466:role/client_task_role",
+  "executionRoleArn": "arn:aws:iam::106323530075:role/client_task_role",
   "requiresCompatibilities": ["FARGATE"],
   "networkMode": "awsvpc",
   "cpu": "256",
@@ -8,7 +8,7 @@
   "containerDefinitions": [
     {
       "name": "client",
-      "image": "nicholasjackson/fake-service:v0.23.1",
+      "image": "106323530075.dkr.ecr.us-east-1.amazonaws.com/my_ecr:latest",
       "essential": true,
       "cpu": 0,
       "portMappings": [
@@ -26,16 +26,7 @@
           "awslogs-stream-prefix": "ecs"
         }
       },
-      "environment": [
-        {
-          "name": "NAME",
-          "value": "client"
-        },
-        {
-          "name": "MESSAGE",
-          "value": "Hello World from the client green!"
-        }
-      ]
+      "environment": []
     }
   ]
 }

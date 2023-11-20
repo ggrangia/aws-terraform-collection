@@ -51,16 +51,34 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
+
   stage {
-    name = "Build"
+    name = "TestSomething"
     action {
-      name             = "Build"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      version          = "1"
-      input_artifacts  = ["source_output"]
-      output_artifacts = ["build_output"]
+      name            = "TestSomething"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["source_output"]
+
+      configuration = {
+        ProjectName = aws_codebuild_project.test_something.name
+      }
+    }
+  }
+
+
+  stage {
+    name = "BuildContainer"
+    action {
+      name            = "BuildContainer"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      version         = "1"
+      input_artifacts = ["source_output"]
+      #output_artifacts = ["build_output"]
 
       configuration = {
         ProjectName = aws_codebuild_project.codebuild.name
@@ -76,16 +94,16 @@ resource "aws_codepipeline" "codepipeline" {
       owner           = "AWS"
       provider        = "CodeDeployToECS"
       version         = "1"
-      input_artifacts = ["build_output"]
+      input_artifacts = ["source_output"]
 
       // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-blue-green.html
       // https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html
       configuration = {
         ApplicationName                = aws_codedeploy_app.client.name
         DeploymentGroupName            = var.codedeploy_app_name
-        AppSpecTemplateArtifact        = "build_output"
+        AppSpecTemplateArtifact        = "source_output"
         AppSpecTemplatePath            = "appspec.yml"
-        TaskDefinitionTemplateArtifact = "build_output"
+        TaskDefinitionTemplateArtifact = "source_output"
         TaskDefinitionTemplatePath     = "taskdef.json"
       }
     }

@@ -12,11 +12,12 @@ PORT = os.getenv("TEST_LISTENER_PORT", "")
 
 @logger.inject_lambda_context
 def lambda_handler(event, context):
+    execution_status = "Failed"
+
     try:
         logger.info({"event": event})
         codedeploy = boto3.client("codedeploy")
         test_status = None
-        execution_status = "Failed"
 
         with urlopen(f"http://{ALB_DNS_NAME}:{PORT}") as response:
             test_status = response.getcode()
