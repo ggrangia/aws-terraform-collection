@@ -19,7 +19,7 @@ resource "aws_ecs_service" "client_service" {
 
   network_configuration {
     subnets          = module.vpc.private_subnets
-    security_groups  = [aws_security_group.client_alb_sg.id]
+    security_groups  = [aws_security_group.alb_sg.id]
     assign_public_ip = false
   }
 
@@ -45,8 +45,3 @@ resource "aws_ecs_service" "client_service" {
   // iam_role        = aws_iam_role.client_task_role.arn
   // depends_on = [aws_iam_policy.client_task_policy]
 }
-
-
-// TODO: codepipeline
-// TODO: appspec
-// 

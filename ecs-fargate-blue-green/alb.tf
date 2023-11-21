@@ -1,5 +1,5 @@
-resource "aws_security_group" "client_alb_sg" {
-  name   = "client_alb_sg"
+resource "aws_security_group" "alb_sg" {
+  name   = "alb_sg"
   vpc_id = module.vpc.vpc_id
 
   ingress {
@@ -19,19 +19,18 @@ resource "aws_security_group" "client_alb_sg" {
   }
 }
 
-resource "aws_lb" "client_alb" {
-  #name               = "client_alb"
+resource "aws_lb" "my_alb" {
+  #name               = "my_alb"
   name_prefix        = "cl-"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.client_alb_sg.id]
+  security_groups    = [aws_security_group.alb_sg.id]
   subnets            = module.vpc.public_subnets
 }
 
 resource "aws_lb_target_group" "client" {
-  name = "client"
-  port = 9090 # fake_Service
-  #port                 = 80 # nginx
+  name                 = "client"
+  port                 = 9090 # fake_Service
   protocol             = "HTTP"
   vpc_id               = module.vpc.vpc_id
   deregistration_delay = 30
@@ -49,9 +48,8 @@ resource "aws_lb_target_group" "client" {
 }
 
 resource "aws_lb_target_group" "client2" {
-  name = "client2"
-  port = 9090 # fake_Service
-  #port                 = 80 # nginx
+  name                 = "client2"
+  port                 = 9090 # fake_Service
   protocol             = "HTTP"
   vpc_id               = module.vpc.vpc_id
   deregistration_delay = 30
@@ -69,7 +67,7 @@ resource "aws_lb_target_group" "client2" {
 }
 
 resource "aws_lb_listener" "client_listener" {
-  load_balancer_arn = aws_lb.client_alb.arn
+  load_balancer_arn = aws_lb.my_alb.arn
   port              = 80
   protocol          = "HTTP"
 
@@ -85,7 +83,7 @@ resource "aws_lb_listener" "client_listener" {
 }
 
 resource "aws_lb_listener" "client2_listener" {
-  load_balancer_arn = aws_lb.client_alb.arn
+  load_balancer_arn = aws_lb.my_alb.arn
   port              = 8080
   protocol          = "HTTP"
 
