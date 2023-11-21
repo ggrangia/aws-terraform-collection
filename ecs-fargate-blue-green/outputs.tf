@@ -1,3 +1,3 @@
 output "url" {
-  value = "http://${aws_lb.client_alb.dns_name}"
+  value = "http://${aws_lb.my_alb.dns_name}"
 }
