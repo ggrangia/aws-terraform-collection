@@ -27,6 +27,6 @@ module "after_allow_test_hook" {
     "POWERTOOLS_SERVICE_NAME" = "after_allow_test_hook"
     "LOG_LEVEL"               = "INFO"
     "ALB_DNS_NAME"            = aws_lb.my_alb.dns_name
-    "TEST_LISTENER_PORT"      = aws_lb_listener.client2_listener.port
+    "TEST_LISTENER_PORT"      = aws_lb_listener.test.port
   }
 }

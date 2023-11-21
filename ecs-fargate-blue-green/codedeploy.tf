@@ -48,20 +48,20 @@ resource "aws_codedeploy_deployment_group" "client_deployment_group" {
   load_balancer_info {
     target_group_pair_info {
       target_group {
-        name = aws_lb_target_group.client.name
+        name = aws_lb_target_group.prod.name
       }
 
       target_group {
-        name = aws_lb_target_group.client2.name
+        name = aws_lb_target_group.test.name
       }
 
       prod_traffic_route {
-        listener_arns = [aws_lb_listener.client_listener.arn]
+        listener_arns = [aws_lb_listener.prod.arn]
       }
 
 
       test_traffic_route {
-        listener_arns = [aws_lb_listener.client2_listener.arn]
+        listener_arns = [aws_lb_listener.test.arn]
       }
     }
   }

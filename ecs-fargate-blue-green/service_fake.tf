@@ -11,7 +11,7 @@ resource "aws_ecs_service" "client_service" {
 
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.client.arn
+    target_group_arn = aws_lb_target_group.prod.arn
     container_name   = "client" // as it appears in a container definition
     container_port   = 9090     # fake_Service
     # container_port = 80 # nginx
