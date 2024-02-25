@@ -5,9 +5,9 @@ info:
   description: My API Gateway v1.
   version: 1.0.0
 servers:
-  - url: ${server_url}
+  - url: example.com # pass here your custom domain
 paths:
-  /endpoint/api1:
+  /endpoint/v1/hello:
     get:
       summary: One of my wonderful endpoint
       parameters:
@@ -17,36 +17,6 @@ paths:
         httpMethod: POST # <--- always POST if using aws_proxy (lambda proxy). It is independent from you path method
         uri: ${endpoint_api1_lambda}
         credentials: ${endpoint_api1_role}
-      responses:
-        "200":
-          description: Everything went fine
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - message
-                properties:
-                  message:
-                    type: string
-                    example: "Well done!"
-              example:
-                message: "Well done!"
-        "401":
-          $ref: "#/components/responses/401Unauthorized"
-        "403":
-          $ref: "#/components/responses/403Forbidden"
-
-  /endpoint/api2:
-    get:
-      summary: Another wonderful endpoint
-      parameters:
-        - $ref: "#/components/parameters/x-api-key"
-      x-amazon-apigateway-integration:
-        type: aws_proxy
-        httpMethod: POST # <--- always POST if using aws_proxy (lambda proxy). It is independent from you path method
-        uri: ${endpoint_api2_lambda}
-        credentials: ${endpoint_api2_role}
       responses:
         "200":
           description: Everything went fine

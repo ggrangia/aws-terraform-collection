@@ -7,33 +7,22 @@ resource "aws_ecr_repository" "hello_api" {
   }
 }
 
-
-locals {
-  hello_api_image_name = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${aws_ecr_repository.hello_api.name}"
-  docker_tags          = [var.git_sha, var.git_tag]
-  docker_full_names    = [for t in local.docker_tags : "${local.hello_api_image_name}:${t}"]
-}
-
-output "name" {
-  value = local.docker_full_names
-}
-
 resource "docker_image" "hello_api" {
   name = local.hello_api_image_name
   build {
     context = "./hello_api"
-    tag     = local.docker_full_names
+    tag     = local.hello_api_docker_full_names
   }
 
   triggers = {
     # TODO: check multiple conditions
-    dir_sha = sha1(join("", [for f in fileset(path.module, "hello_api/*") : filesha1(f)]))
-    #time    = timestamp()
+    #dir_sha = sha1(join("", [for f in fileset(path.module, "hello_api/*") : filesha1(f)]))
+    time = timestamp()
   }
 }
 
 resource "docker_registry_image" "hello_api" {
-  for_each = toset(local.docker_full_names)
+  for_each = toset(local.hello_api_docker_full_names)
 
   name          = each.key
   keep_remotely = true # if true do not delete remotely
@@ -65,16 +54,6 @@ module "hello_api" {
   #attach_policy_json = true
   #policy_json        = data.aws_iam_policy_document.hello_api.json
 
-  allowed_triggers = {
-    APIGatewayv1get = {
-      service = "apigateway"
-      #source_arn = "${aws_api_gateway_stage.prd.arn}/*/*"
-      # FIXME: not working yet. Maybe add permission to invoke function to api gw?]
-      # FIXME: setup logging role
-      source_arn = "arn:aws:execute-api:eu-west-1:${data.aws_caller_identity.current.account_id}:5g50av9qx9/prd/*/*"
-    }
-  }
-
   environment_variables = {
     "POWERTOOLS_LOG_LEVEL" : "INFO",
     "POWERTOOLS_SERVICE_NAME" : "HELLO_API_V1",
@@ -82,19 +61,16 @@ module "hello_api" {
 
   depends_on = [docker_registry_image.hello_api]
 }
-/*
-module "alias_v1" {
+
+// Always refresh the alias -> similar to latest
+module "alias_prd" {
   source = "terraform-aws-modules/lambda/aws//modules/alias"
 
   refresh_alias = true
 
-  name = "v1_0"
+  name = "prd"
 
   function_name    = module.hello_api.lambda_function_name
   function_version = module.hello_api.lambda_function_version
 }
 
-output "alias" {
-  value = module.alias_v1
-}
-*/

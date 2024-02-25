@@ -1,2 +1,2 @@
-git_tag = "v1.3"
-git_sha = "asj23hbshddjsdj3325555"
+git_tag = "v1.0"
+git_sha = "sha-commit-1"
