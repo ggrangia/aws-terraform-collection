@@ -39,7 +39,7 @@ def handler(event, context):
 
     prob = random()
 
-    called_method_arn = [event["methodArn"]] if random() <= prob else []
+    called_method_arn = [event["methodArn"]] if prob <= 0.5 else []
 
     policy = generate_policy(probability=prob, resources=called_method_arn)
 

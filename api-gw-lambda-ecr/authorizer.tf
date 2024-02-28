@@ -15,7 +15,8 @@ resource "docker_image" "authorizer" {
   }
 
   triggers = {
-    dir_sha = sha1(join("", [for f in fileset(path.module, "authorizer/*") : filesha1(f)]))
+    #dir_sha = sha1(join("", [for f in fileset(path.module, "authorizer/*") : filesha1(f)])) 
+    tags = join("-", local.authorizer_docker_full_names)
   }
 }
 
@@ -23,7 +24,7 @@ resource "docker_registry_image" "authorizer" {
   for_each = toset(local.authorizer_docker_full_names)
 
   name          = each.key
-  keep_remotely = true # if true do not delete remotely
+  keep_remotely = true # if true do not delete remotely 
   depends_on    = [docker_image.authorizer]
 }
 

@@ -46,10 +46,11 @@ module "hello_api" {
   attach_tracing_policy = true
   tracing_mode          = "Active"
   package_type          = "Image"
-  image_uri             = "${aws_ecr_repository.hello_api.repository_url}:${var.hello_api_tag}"
 
-  #attach_policy_json = true
-  #policy_json        = data.aws_iam_policy_document.hello_api.json
+  # FIXME: if passing "" tag, it get invalid. Lambda always points to the last version 
+  # Use alias to control the api GW (update prd only on version tag)
+  image_uri = "${aws_ecr_repository.hello_api.repository_url}:${var.hello_api_tag}"
+
 
   environment_variables = {
     "POWERTOOLS_LOG_LEVEL" : "INFO",
