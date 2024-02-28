@@ -7,4 +7,6 @@ logger = Logger()
 @logger.inject_lambda_context
 def handler(event, context):
     logger.info(f"Event received: {event}")
-    return {"body": "ok", "statusCode": 200}
+    prob = event["requestContext"]["authorizer"]["probability"]
+
+    return {"body": f"You were authorized! {prob}", "statusCode": 200}

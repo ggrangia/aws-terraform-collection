@@ -5,10 +5,10 @@ from random import random
 logger = Logger()
 
 
-def generate_policy(probability,resources):
+def generate_policy(probability, resources):
     """
-     Generate an IAM Allow policy based on the resource.
-     If resources is empty, the request is not authorized.
+    Generate an IAM Allow policy based on the resource.
+    If resources is empty, the request is not authorized.
     """
     policy = {
         "principalId": "user",
@@ -21,10 +21,8 @@ def generate_policy(probability,resources):
                     "Resource": resources,
                 }
             ],
-        },
-        "context": {
-            "probability": probability
-        }
+        },  # FIXME: pass context properly to lambda function
+        "context": {"probability": str(probability)},
     }
 
     return policy
@@ -35,15 +33,15 @@ def handler(event, context):
     """
     Authorize 50% of the calls
     """
-    
+
     # I do not suggest to log the whole event because it may log confidential parameters (passwords, api keys)
     logger.info(f"Event received: {event}")
-    
+
     prob = random()
 
     called_method_arn = [event["methodArn"]] if random() <= prob else []
 
-    policy = generate_policy(resources=called_method_arn)
-    
+    policy = generate_policy(probability=prob, resources=called_method_arn)
+
     logger.info(f"Generated policy: {policy}")
     return policy
