@@ -5,7 +5,7 @@ from random import random
 logger = Logger()
 
 
-def generate_policy(resources):
+def generate_policy(probability,resources):
     """
      Generate an IAM Allow policy based on the resource.
      If resources is empty, the request is not authorized.
@@ -22,6 +22,9 @@ def generate_policy(resources):
                 }
             ],
         },
+        "context": {
+            "probability": probability
+        }
     }
 
     return policy
@@ -36,7 +39,9 @@ def handler(event, context):
     # I do not suggest to log the whole event because it may log confidential parameters (passwords, api keys)
     logger.info(f"Event received: {event}")
     
-    called_method_arn = [event["methodArn"]] if random() <= 0.5 else []
+    prob = random()
+
+    called_method_arn = [event["methodArn"]] if random() <= prob else []
 
     policy = generate_policy(resources=called_method_arn)
     

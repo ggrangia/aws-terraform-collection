@@ -7,7 +7,4 @@ logger = Logger()
 @logger.inject_lambda_context
 def handler(event, context):
     logger.info(f"Event received: {event}")
-    return {
-        "body": "ok",
-        "statusCode": 200
-    }
+    return {"body": "ok", "statusCode": 200}
