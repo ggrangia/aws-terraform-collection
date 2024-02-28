@@ -21,7 +21,7 @@ def generate_policy(probability, resources):
                     "Resource": resources,
                 }
             ],
-        },  # FIXME: pass context properly to lambda function
+        },
         "context": {"probability": str(probability)},
     }
 
