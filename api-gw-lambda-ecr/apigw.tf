@@ -2,8 +2,11 @@ resource "aws_api_gateway_rest_api" "example" {
   name = "myapiv1"
 
   body = templatefile("${path.root}/openapi.yml.tpl", {
-    endpoint_api1_lambda = module.alias_prd.lambda_alias_invoke_arn,
+    endpoint_api1_lambda = module.alias_prd.lambda_alias_invoke_arn
     endpoint_api1_role   = module.hello_resource_role.role_arn
+
+    authorizer_lambda      = module.authorizer.lambda_function_invoke_arn
+    authorizer_credentials = module.authorizer_resource_role.role_arn
   })
 
   endpoint_configuration {
@@ -38,6 +41,13 @@ module "hello_resource_role" {
   lambda_arns = ["${module.hello_api.lambda_function_arn}*"] # Use the lambda arn in the resource role, not the invoke arn
 }
 
+
+module "authorizer_resource_role" {
+  source = "./modules/apigw_resource_role"
+
+  role_name   = "authorizer_resource_role"
+  lambda_arns = ["${module.authorizer.lambda_function_arn}*"]
+}
 
 resource "aws_api_gateway_method_settings" "all" {
   rest_api_id = aws_api_gateway_rest_api.example.id

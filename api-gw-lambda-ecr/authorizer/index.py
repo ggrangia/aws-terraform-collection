@@ -5,8 +5,11 @@ from random import random
 logger = Logger()
 
 
-def generate_policy(effect, resources):
-    # Generate an IAM policy based on the effect (Allow/Deny) and the resource
+def generate_policy(resources):
+    """
+     Generate an IAM Allow policy based on the resource.
+     If resources is empty, the request is not authorized.
+    """
     policy = {
         "principalId": "user",
         "policyDocument": {
@@ -14,7 +17,7 @@ def generate_policy(effect, resources):
             "Statement": [
                 {
                     "Action": "execute-api:Invoke",
-                    "Effect": effect,
+                    "Effect": "Allow",
                     "Resource": resources,
                 }
             ],
@@ -33,11 +36,9 @@ def handler(event, context):
     # I do not suggest to log the whole event because it may log confidential parameters (passwords, api keys)
     logger.info(f"Event received: {event}")
     
-    called_method_arn = [event["methodArn"]]
+    called_method_arn = [event["methodArn"]] if random() <= 0.5 else []
 
-    effect = "Allow" if random() <= 0.5 else "Reject"
-
-    policy = generate_policy(effect=effect, resources=called_method_arn)
+    policy = generate_policy(resources=called_method_arn)
     
     logger.info(f"Generated policy: {policy}")
     return policy

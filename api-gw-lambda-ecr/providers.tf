@@ -21,10 +21,6 @@ provider "docker" {
 }
 
 provider "aws" {
-  access_key = "test"
-  secret_key = "test"
-
-
   region = "eu-west-1"
 
   default_tags {

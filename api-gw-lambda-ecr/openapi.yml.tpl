@@ -1,5 +1,6 @@
 openapi: 3.0.1
 x-original-swagger-version: "2.0"
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions.html
 info:
   title: My API v1
   description: My API Gateway v1.
@@ -11,12 +12,15 @@ paths:
     get:
       summary: One of my wonderful endpoint
       parameters:
-        - $ref: "#/components/parameters/x-api-key"
+        - $ref: "#/components/parameters/authorization"
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: POST # <--- always POST if using aws_proxy (lambda proxy). It is independent from you path method
         uri: ${endpoint_api1_lambda}
         credentials: ${endpoint_api1_role}
+      security:
+        - authorizerRandom: []
+
       responses:
         "200":
           description: Everything went fine
@@ -43,9 +47,9 @@ components:
   #--------------------
 
   parameters:
-    x-api-key:
+    authorization:
       in: header
-      name: x-api-key
+      name: mykey
       schema:
         type: string
       required: true
@@ -81,3 +85,17 @@ components:
                 enum: [Forbidden]
             example:
               message: Forbidden
+
+  securitySchemes:
+    authorizerRandom:
+      name: authorizerRandom
+      type: apiKey
+      in: header
+      x-amazon-apigateway-authtype: Custom scheme with corporate claims
+      x-amazon-apigateway-authorizer:
+        type: request
+        authorizerUri: ${authorizer_lambda}
+        authorizerCredentials: ${authorizer_credentials}
+        authorizerResultTtlInSeconds: 0
+        authorizerPayloadFormatVersion: "1.0"
+        identitySource: "method.request.header.mykey"

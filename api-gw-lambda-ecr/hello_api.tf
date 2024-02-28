@@ -8,16 +8,14 @@ resource "aws_ecr_repository" "hello_api" {
 }
 
 resource "docker_image" "hello_api" {
-  name = local.hello_api_image_name
+  name = aws_ecr_repository.hello_api.repository_url
   build {
     context = "./hello_api"
     tag     = local.hello_api_docker_full_names
   }
 
   triggers = {
-    # TODO: check multiple conditions
-    #dir_sha = sha1(join("", [for f in fileset(path.module, "hello_api/*") : filesha1(f)]))
-    time = timestamp()
+    dir_sha = sha1(join("", [for f in fileset(path.module, "hello_api/*") : filesha1(f)]))
   }
 }
 
@@ -25,7 +23,7 @@ resource "docker_registry_image" "hello_api" {
   for_each = toset(local.hello_api_docker_full_names)
 
   name          = each.key
-  keep_remotely = true # if true do not delete remotely
+  keep_remotely = true
   depends_on    = [docker_image.hello_api]
 }
 
@@ -43,13 +41,12 @@ module "hello_api" {
 
   timeout     = 30
   memory_size = 128
-  #ephemeral_storage_size = 1024
 
 
   attach_tracing_policy = true
   tracing_mode          = "Active"
   package_type          = "Image"
-  image_uri             = "${aws_ecr_repository.hello_api.repository_url}:${var.git_tag}"
+  image_uri             = "${aws_ecr_repository.hello_api.repository_url}:${var.hello_api_tag}"
 
   #attach_policy_json = true
   #policy_json        = data.aws_iam_policy_document.hello_api.json
