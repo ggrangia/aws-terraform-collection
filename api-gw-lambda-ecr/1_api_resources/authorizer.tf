@@ -10,12 +10,11 @@ resource "aws_ecr_repository" "authorizer" {
 resource "docker_image" "authorizer" {
   name = aws_ecr_repository.authorizer.repository_url
   build {
-    context = "./authorizer"
+    context = "./src/authorizer"
     tag     = local.authorizer_docker_full_names
   }
 
   triggers = {
-    #dir_sha = sha1(join("", [for f in fileset(path.module, "authorizer/*") : filesha1(f)])) 
     tags = join("-", local.authorizer_docker_full_names)
   }
 }
@@ -24,7 +23,7 @@ resource "docker_registry_image" "authorizer" {
   for_each = toset(local.authorizer_docker_full_names)
 
   name          = each.key
-  keep_remotely = true # if true do not delete remotely 
+  keep_remotely = true # if true do not delete remotely
   depends_on    = [docker_image.authorizer]
 }
 
@@ -46,7 +45,7 @@ module "authorizer" {
   attach_tracing_policy = true
   tracing_mode          = "Active"
   package_type          = "Image"
-  image_uri             = "${aws_ecr_repository.authorizer.repository_url}:${var.authorizer_tag}"
+  image_uri             = "${aws_ecr_repository.authorizer.repository_url}:${var.git_sha}"
 
 
   environment_variables = {

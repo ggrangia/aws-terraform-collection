@@ -10,7 +10,7 @@ resource "aws_ecr_repository" "hello_api" {
 resource "docker_image" "hello_api" {
   name = aws_ecr_repository.hello_api.repository_url
   build {
-    context = "./hello_api"
+    context = "./src/hello_api"
     tag     = local.hello_api_docker_full_names
   }
 
@@ -48,8 +48,8 @@ module "hello_api" {
   package_type          = "Image"
 
   # FIXME: if passing "" tag, it get invalid. Lambda always points to the last version 
-  # Use alias to control the api GW (update prd only on version tag)
-  image_uri = "${aws_ecr_repository.hello_api.repository_url}:${var.hello_api_tag}"
+  # Use alias to control the api GW (update prd only on version tag) 
+  image_uri = "${aws_ecr_repository.hello_api.repository_url}:${var.git_sha}"
 
 
   environment_variables = {
@@ -60,15 +60,14 @@ module "hello_api" {
   depends_on = [docker_registry_image.hello_api]
 }
 
-// Always refresh the alias -> similar to latest
+// Always refresh the alias only when a tag is passed or it is the first commit 
 module "alias_prd" {
   source = "terraform-aws-modules/lambda/aws//modules/alias"
 
-  refresh_alias = true
+  refresh_alias = false
 
   name = "prd"
 
   function_name    = module.hello_api.lambda_function_name
   function_version = module.hello_api.lambda_function_version
 }
-

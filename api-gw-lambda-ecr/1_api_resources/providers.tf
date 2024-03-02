@@ -27,7 +27,7 @@ provider "aws" {
     tags = {
       Environment = "Dev"
       Owner       = "ggrangia"
-      Project     = "api-gw-lambda-ecr"
+      Project     = "api-gw-lambda-ecr-api-resources"
     }
   }
 }
