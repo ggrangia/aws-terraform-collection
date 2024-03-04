@@ -15,7 +15,7 @@ resource "docker_image" "authorizer" {
   }
 
   triggers = {
-    tags = join("-", local.authorizer_docker_full_names)
+    dir_sha = sha1(join("", [for f in fileset(path.module, "./src/authorizer/*") : filesha1(f)]))
   }
 }
 

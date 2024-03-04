@@ -15,7 +15,7 @@ resource "docker_image" "hello_api" {
   }
 
   triggers = {
-    dir_sha = sha1(join("", [for f in fileset(path.module, "hello_api/*") : filesha1(f)]))
+    dir_sha = sha1(join("", [for f in fileset(path.module, "./src/hello_api/*") : filesha1(f)]))
   }
 }
 
@@ -60,14 +60,21 @@ module "hello_api" {
   depends_on = [docker_registry_image.hello_api]
 }
 
-// Always refresh the alias only when a tag is passed or it is the first commit 
-module "alias_prd" {
-  source = "terraform-aws-modules/lambda/aws//modules/alias"
-
-  refresh_alias = false
-
+resource "aws_lambda_alias" "hello_api_prd" {
   name = "prd"
 
   function_name    = module.hello_api.lambda_function_name
   function_version = module.hello_api.lambda_function_version
+
+  lifecycle {
+    // Create the alias 
+    ignore_changes = [function_version]
+  }
 }
+
+module "hello_api_deployment" {
+  source = "../modules/lambda_alias_deployment"
+
+  lambda_name = module.hello_api.lambda_function_name
+}
+
