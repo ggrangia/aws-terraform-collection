@@ -2,7 +2,7 @@ This project implements [Architecture for Centralized Internet Egress with NAT G
 
 ## Description
 
-The project is made by three modules:
+The project is made of three modules:
 * Spoke VPC - all your workload VPCs
 * Egress VPC - central VPC that 
 * Transit Gateway
