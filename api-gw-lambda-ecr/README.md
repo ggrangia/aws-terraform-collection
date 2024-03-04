@@ -16,5 +16,6 @@ The API lambda has an alias that gets updated when a specific tag (v\*) gets pus
 An eventbridge rule catches the event and forwards it to a lambda function that publishes a new lambda version,
 creates a new alias with the (escaped) tag name, and triggers codedeploy to update the alias with the initial alias to the last version.
 The alias created by the lambda function is kept as a reference.
+In this example I used terraform docker provider, but it is totally possible to use github actions to create and push the containers.
 
 ![Arch diagram](/api-gw-lambda-ecr/img/aws_terraform_collection_apigw_ecr.jpg)

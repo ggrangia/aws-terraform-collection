@@ -9,3 +9,4 @@ A collection of useful terraform tiny projects for your Organization
 - **ipam-vpc**: deploys a VPC (with public and private subnets) using AWS IPAM to manage CIDRs
 - **tgw-shared_services**: Selectively route traffic across your Organizations via Transit Gateway (Route Table Associations and attachments Propagations)
 - **Map Step Function**: (parallel-lambda-step-function) perform a set of operations (Lambda function) in parallel thanks to Step Function Map workflow
+- **API Gateway OpenAPI**: (api-gw-lambda-ecr) deploys an API Gateway with and authorizer defined using OpenAPI spec
