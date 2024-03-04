@@ -35,7 +35,7 @@ resource "aws_api_gateway_stage" "prd" {
 
 
 module "hello_resource_role" {
-  source = "../modules/apigw_resource_role"
+  source = "./modules/apigw_resource_role"
 
   role_name   = "hello_api_resource_role"
   lambda_arns = ["${module.hello_api.lambda_function_arn}*"] # Use the lambda arn in the resource role, not the invoke arn
@@ -43,7 +43,7 @@ module "hello_resource_role" {
 
 
 module "authorizer_resource_role" {
-  source = "../modules/apigw_resource_role"
+  source = "./modules/apigw_resource_role"
 
   role_name   = "authorizer_resource_role"
   lambda_arns = ["${module.authorizer.lambda_function_arn}*"]

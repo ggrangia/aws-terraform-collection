@@ -47,8 +47,6 @@ module "hello_api" {
   tracing_mode          = "Active"
   package_type          = "Image"
 
-  # FIXME: if passing "" tag, it get invalid. Lambda always points to the last version 
-  # Use alias to control the api GW (update prd only on version tag) 
   image_uri = "${aws_ecr_repository.hello_api.repository_url}:${var.git_sha}"
 
 
@@ -73,7 +71,7 @@ resource "aws_lambda_alias" "hello_api_prd" {
 }
 
 module "hello_api_deployment" {
-  source = "../modules/lambda_alias_deployment"
+  source = "./modules/lambda_alias_deployment"
 
   lambda_name = module.hello_api.lambda_function_name
 }

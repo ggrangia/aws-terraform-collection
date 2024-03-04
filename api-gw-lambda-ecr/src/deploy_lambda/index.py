@@ -41,34 +41,7 @@ def wait_for_lambda_to_be_updated(repo_name):
         raise ValueError(err_str)
 
 
-@logger.inject_lambda_context
-def lambda_handler(event, context):
-
-    logger.info(f"Event: {event}")
-
-    repo_name = event["detail"][
-        "repository-name"
-    ]  # It should have the same the lambda function
-    image_tag = event["detail"]["image-tag"]
-    # 0- Check lambda is not updating
-    lambda_update_status = lambda_client.get_function(FunctionName=repo_name)[
-        "Configuration"
-    ]["LastUpdateStatus"]
-
-    while lambda_update_status == "InProgress":
-        logger.info(f"Lambda {repo_name} {lambda_update_status}")
-        time.sleep(2)
-        lambda_update_status = lambda_client.get_function(FunctionName=repo_name)[
-            "Configuration"
-        ]["LastUpdateStatus"]
-
-    if lambda_update_status != "Successful":
-        err_str = f"Last update {lambda_update_status}"
-        logger.error(err_str)
-        raise ValueError(err_str)
-
-    # 1 - Publish lambda version
-    # Create a new version. If the version exists already, it return its description
+def publish_new_version(image_tag, repo_name):
     version_response = lambda_client.publish_version(
         Description=image_tag,
         FunctionName=repo_name,
@@ -77,6 +50,38 @@ def lambda_handler(event, context):
 
     target_version = version_response["Version"]
 
+    return target_version
+
+
+def create_new_alias(repo_name, alias_tag_name, target_version, image_tag):
+    # It fails if the alias exist already
+    # Lambda.Client.exceptions.ResourceConflictException
+    create_reponse = lambda_client.create_alias(
+        FunctionName=repo_name,
+        Name=alias_tag_name,
+        FunctionVersion=target_version,
+        Description=image_tag,
+    )
+    logger.info(f"Alias response: {create_reponse}")
+
+
+@logger.inject_lambda_context
+def lambda_handler(event, context):
+
+    logger.info(f"Event: {event}")
+
+    repo_name = event["detail"][
+        "repository-name"
+    ]  # It should have the same the lambda function
+
+    image_tag = event["detail"]["image-tag"]
+    # 0- Check lambda is not updating
+    wait_for_lambda_to_be_updated(repo_name=repo_name)
+
+    # 1 - Publish lambda version
+    # Create a new version. If the version exists already, it return its description
+    target_version = publish_new_version(image_tag, repo_name)
+
     # 2 - Get current prd alias
     prd_alias_resp = lambda_client.get_alias(FunctionName=repo_name, Name="prd")
     prd_current_version = prd_alias_resp["FunctionVersion"]
@@ -84,14 +89,12 @@ def lambda_handler(event, context):
     alias_tag_name = image_tag.replace(".", "-")  # . are not allowed
 
     # 3 - Create tag alias
-    create_reponse = lambda_client.create_alias(
-        FunctionName=repo_name,
-        Name=alias_tag_name,
-        FunctionVersion=target_version,
-        Description=image_tag,
+    create_new_alias(
+        repo_name=repo_name,
+        alias_tag_name=alias_tag_name,
+        image_tag=image_tag,
+        target_version=target_version,
     )
-
-    logger.info(f"Alias response: {create_reponse}")
 
     # Start "prd" deployment
     # Also application name and deployment group have the same name as the repo
@@ -149,5 +152,7 @@ def lambda_handler(event, context):
         err_str = f"Deployment {deployment_id} ended {status}"
         logger.error(err_str)
         raise ValueError(err_str)
+
+    logger.info("Deployment COMPLETED!!!!")
 
     return True
