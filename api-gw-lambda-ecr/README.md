@@ -13,4 +13,4 @@ To achieve this goal I used a terraform template (.tpl) and injected the lambdas
 The API lambda has an alias that gets updated when a specific tag (v*) gets pushed to the ECR repository.
 An eventbridge rule catches the event and forwards it to a lambda function that publishes a new lambda version,
 creates a new alias with the (escaped) tag name, and triggers codedeploy to update the alias with the initial alias to the last version.
-The alias created by the lambda function is kept as reference.
+The alias created by the lambda function is kept as a reference.
