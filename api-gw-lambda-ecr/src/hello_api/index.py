@@ -9,4 +9,4 @@ def handler(event, context):
     logger.info(f"Event received: {event}")
     prob = event["requestContext"]["authorizer"]["probability"]
 
-    return {"body": f"You were authorized! {prob} big2", "statusCode": 200}
+    return {"body": f"You were authorized! {prob}", "statusCode": 200}
