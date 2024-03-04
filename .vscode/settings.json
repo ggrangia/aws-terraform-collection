@@ -1,7 +1,7 @@
 {
-    "python.formatting.provider": "none",
     "editor.formatOnSave": true,
     "[python]": {
+        "editor.formatOnSave": true,
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "python.testing.pytestArgs": [
