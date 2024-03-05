@@ -15,7 +15,7 @@ paths:
         - $ref: "#/components/parameters/authorization"
       x-amazon-apigateway-integration:
         type: aws_proxy
-        httpMethod: POST # <--- always POST if using aws_proxy (lambda proxy). It is independent from you path method
+        httpMethod: POST # <--- always POST if using aws_proxy (lambda proxy). It is independent of your path method
         uri: ${endpoint_api1_lambda}
         credentials: ${endpoint_api1_role}
       security:
