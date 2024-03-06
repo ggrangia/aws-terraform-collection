@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_event_rule" "api_push_version" {
   name        = "api_push_version"
-  description = "Capture each AWS Console Sign In"
+  description = "Capture each v* tag pushed to ECR"
 
   event_pattern = jsonencode({
     source = ["aws.ecr"]
