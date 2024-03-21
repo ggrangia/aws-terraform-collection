@@ -1,0 +1,2 @@
+metaflow==2.11.5
+pandas==2.2.1
