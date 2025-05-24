@@ -9,6 +9,6 @@ resource "aws_cognito_identity_pool" "entraid" {
 ephemeral "aws_cognito_identity_openid_token_for_developer_identity" "entraid" {
   identity_pool_id = aws_cognito_identity_pool.entraid.id
   logins = {
-    "entraid" : "App1"
+    "entraid" : var.entraid_credentials_name
   }
 }
