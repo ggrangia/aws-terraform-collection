@@ -5,5 +5,5 @@ output "tenant_id" {
 }
 
 output "entraid_application_tenantid" {
-  value = azuread_application_federated_identity_credential.aws_integration.application_id
+  value = azuread_application_registration.aws_integration.client_id
 }
