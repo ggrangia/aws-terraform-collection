@@ -44,3 +44,10 @@ resource "aws_ec2_transit_gateway_route" "spoke_default" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment_accepter.egress.id
   transit_gateway_route_table_id = module.tgw.spoke_route_table.id
 }
+
+# Avoid traffic to be routed back from NAT to other VPCs (block east-west traffic)
+resource "aws_ec2_transit_gateway_route" "pvt_blackhole" {
+  destination_cidr_block         = var.spoke_main_cidr
+  blackhole                      = true
+  transit_gateway_route_table_id = module.tgw.spoke_route_table.id
+}
