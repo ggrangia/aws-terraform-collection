@@ -1,0 +1,147 @@
+{
+  "Comment": "Lambda Deployment",
+  "StartAt": "WaitForLambdaUpdate",
+  "States": {
+    "WaitForLambdaUpdate": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:lambda:getFunction",
+      "Parameters": {
+        "FunctionName.$": "$.detail.repository-name"
+      },
+      "Next": "CheckUpdateStatus"
+    },
+    "CheckUpdateStatus": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.Configuration.LastUpdateStatus",
+          "StringEquals": "InProgress",
+          "Next": "Wait2s"
+        },
+        {
+          "Variable": "$.Configuration.LastUpdateStatus",
+          "StringEquals": "Successful",
+          "Next": "PublishVersion"
+        }
+      ],
+      "Default": "FailUpdate"
+    },
+    "Wait2s": {
+      "Type": "Wait",
+      "Seconds": 2,
+      "Next": "WaitForLambdaUpdate"
+    },
+    "FailUpdate": {
+      "Type": "Fail",
+      "Error": "UpdateFailed",
+      "Cause": "Lambda update not successful"
+    },
+    "PublishVersion": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:lambda:publishVersion",
+      "Parameters": {
+        "FunctionName.$": "$.detail.repository-name",
+        "Description.$": "$.detail.image-tag"
+      },
+      "ResultPath": "$.PublishVersion",
+      "Next": "GetPrdAlias"
+    },
+    "GetPrdAlias": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:lambda:getAlias",
+      "Parameters": {
+        "FunctionName.$": "$.detail.repository-name",
+        "Name": "prd"
+      },
+      "ResultPath": "$.PrdAlias",
+      "Next": "CreateTagAlias"
+    },
+    "CreateTagAlias": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:lambda:createAlias",
+      "Parameters": {
+        "FunctionName.$": "$.detail.repository-name",
+        "Name.$": "States.Format('{}', $.detail.image-tag)",
+        "FunctionVersion.$": "$.PublishVersion.Version",
+        "Description.$": "$.detail.image-tag"
+      },
+      "Next": "CreateDeployment"
+    },
+    "CreateDeployment": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:codedeploy:createDeployment",
+      "Parameters": {
+        "applicationName.$": "$.detail.repository-name",
+        "deploymentGroupName.$": "$.detail.repository-name",
+        "deploymentConfigName": "CodeDeployDefault.LambdaAllAtOnce",
+        "description.$": "States.Format('Updating {} to {}', $.detail.repository-name, $.detail.image-tag)",
+        "revision": {
+          "revisionType": "AppSpecContent",
+          "appSpecContent": {
+            "content.$": "States.JsonToString({\"version\": 0.0, \"Resources\": [{\"myLambdaFunction\": {\"Type\": \"AWS::Lambda::Function\", \"Properties\": {\"Name\": $.detail.repository-name, \"Alias\": \"prd\", \"CurrentVersion\": $.PrdAlias.FunctionVersion, \"TargetVersion\": $.PublishVersion.Version}}}]})"
+          }
+        }
+      },
+      "ResultPath": "$.Deployment",
+      "Next": "PollDeploymentStatus"
+    },
+    "PollDeploymentStatus": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:codedeploy:getDeployment",
+      "Parameters": {
+        "deploymentId.$": "$.Deployment.deploymentId"
+      },
+      "ResultPath": "$.DeploymentStatus",
+      "Next": "CheckDeploymentStatus"
+    },
+    "CheckDeploymentStatus": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.DeploymentStatus.deploymentInfo.status",
+          "StringEquals": "Succeeded",
+          "Next": "Success"
+        },
+        {
+          "Or": [
+            {
+              "Variable": "$.DeploymentStatus.deploymentInfo.status",
+              "StringEquals": "Created"
+            },
+            {
+              "Variable": "$.DeploymentStatus.deploymentInfo.status",
+              "StringEquals": "InProgress"
+            },
+            {
+              "Variable": "$.DeploymentStatus.deploymentInfo.status",
+              "StringEquals": "Pending"
+            },
+            {
+              "Variable": "$.DeploymentStatus.deploymentInfo.status",
+              "StringEquals": "Queued"
+            },
+            {
+              "Variable": "$.DeploymentStatus.deploymentInfo.status",
+              "StringEquals": "Ready"
+            }
+          ],
+          "Next": "Wait5s"
+        }
+      ],
+      "Default": "FailDeployment"
+    },
+    "Wait5s": {
+      "Type": "Wait",
+      "Seconds": 5,
+      "Next": "PollDeploymentStatus"
+    },
+    "FailDeployment": {
+      "Type": "Fail",
+      "Error": "DeploymentFailed",
+      "Cause": "CodeDeploy deployment did not succeed"
+    },
+    "Success": {
+      "Type": "Succeed"
+    }
+  }
+}
