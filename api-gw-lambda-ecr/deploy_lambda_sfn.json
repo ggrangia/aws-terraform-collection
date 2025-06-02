@@ -71,14 +71,14 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::aws-sdk:codedeploy:createDeployment",
       "Parameters": {
-        "applicationName.$": "$.detail.repository-name",
-        "deploymentGroupName.$": "$.detail.repository-name",
-        "deploymentConfigName": "CodeDeployDefault.LambdaAllAtOnce",
-        "description.$": "States.Format('Updating {} to {}', $.detail.repository-name, $.detail.image-tag)",
-        "revision": {
-          "revisionType": "AppSpecContent",
-          "appSpecContent": {
-            "content.$": "States.JsonToString({\"version\": 0.0, \"Resources\": [{\"myLambdaFunction\": {\"Type\": \"AWS::Lambda::Function\", \"Properties\": {\"Name\": $.detail.repository-name, \"Alias\": \"prd\", \"CurrentVersion\": $.PrdAlias.FunctionVersion, \"TargetVersion\": $.PublishVersion.Version}}}]})"
+        "ApplicationName.$": "$.detail.repository-name",
+        "DeploymentGroupName.$": "$.detail.repository-name",
+        "DeploymentConfigName": "CodeDeployDefault.LambdaAllAtOnce",
+        "Description.$": "States.Format('Updating {} to {}', $.detail.repository-name, $.detail.image-tag)",
+        "Revision": {
+          "RevisionType": "AppSpecContent",
+          "AppSpecContent": {
+            "Content.$": "States.JsonToString({\"version\": 0.0, \"Resources\": [{\"myLambdaFunction\": {\"Type\": \"AWS::Lambda::Function\", \"Properties\": {\"Name\": $.detail.repository-name, \"Alias\": \"prd\", \"CurrentVersion\": $.PrdAlias.FunctionVersion, \"TargetVersion\": $.PublishVersion.Version}}}]})"
           }
         }
       },
@@ -89,7 +89,7 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::aws-sdk:codedeploy:getDeployment",
       "Parameters": {
-        "deploymentId.$": "$.Deployment.deploymentId"
+        "DeploymentId.$": "$.Deployment.deploymentId"
       },
       "ResultPath": "$.DeploymentStatus",
       "Next": "CheckDeploymentStatus"
