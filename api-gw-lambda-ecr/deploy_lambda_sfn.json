@@ -61,7 +61,7 @@
       "Resource": "arn:aws:states:::aws-sdk:lambda:createAlias",
       "Parameters": {
         "FunctionName.$": "$.detail.repository-name",
-        "Name.$": "States.Format('{}', $.detail.image-tag)",
+        "Name.$": "$.detail.image-tag",
         "FunctionVersion.$": "$.PublishVersion.Version",
         "Description.$": "$.detail.image-tag"
       },
