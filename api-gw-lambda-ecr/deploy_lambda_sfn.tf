@@ -1,8 +1,10 @@
-resource "aws_iam_policy" "deploy_lambda" {
-  name        = "DeployPolicy"
-  description = "Permissions to deploy lambda and trigger codedeploy"
-  policy      = data.aws_iam_policy_document.deploy_lambda.json
+resource "aws_iam_role_policy" "deploy_lambda" {
+  name = "DeployPolicy"
+  role = aws_iam_role.deploy_lambda_sfn.id
+
+  policy = data.aws_iam_policy_document.deploy_lambda.json
 }
+
 
 resource "aws_iam_role" "deploy_lambda_sfn" {
   name               = "DeployLambdaStepFunction"
