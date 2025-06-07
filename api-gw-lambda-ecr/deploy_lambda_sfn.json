@@ -8,18 +8,23 @@
       "Parameters": {
         "FunctionName.$": "$.detail.repository-name"
       },
+      "ResultSelector": {
+        "FunctionName.$": "$.Configuration.FunctionName",
+        "LastUpdateStatus.$": "$.Configuration.LastUpdateStatus"
+      },
+      "ResultPath": "$.Lambda",
       "Next": "CheckUpdateStatus"
     },
     "CheckUpdateStatus": {
       "Type": "Choice",
       "Choices": [
         {
-          "Variable": "$.Configuration.LastUpdateStatus",
+          "Variable": "$.Lambda.LastUpdateStatus",
           "StringEquals": "InProgress",
           "Next": "Wait2s"
         },
         {
-          "Variable": "$.Configuration.LastUpdateStatus",
+          "Variable": "$.Lambda.LastUpdateStatus",
           "StringEquals": "Successful",
           "Next": "PublishVersion"
         }
@@ -40,7 +45,7 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::aws-sdk:lambda:publishVersion",
       "Parameters": {
-        "FunctionName.$": "$.detail.repository-name",
+        "FunctionName.$": "$.Lambda.FunctionName",
         "Description.$": "$.detail.image-tag"
       },
       "ResultPath": "$.PublishVersion",
