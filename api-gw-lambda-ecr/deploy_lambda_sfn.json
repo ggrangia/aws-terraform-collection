@@ -48,6 +48,9 @@
         "FunctionName.$": "$.Lambda.FunctionName",
         "Description.$": "$.detail.image-tag"
       },
+      "ResultSelector": {
+        "Version.$": "$.Version"
+      },
       "ResultPath": "$.PublishVersion",
       "Next": "GetPrdAlias"
     },
@@ -70,6 +73,7 @@
         "FunctionVersion.$": "$.PublishVersion.Version",
         "Description.$": "$.detail.image-tag"
       },
+      "ResultPath": null,
       "Next": "CreateDeployment"
     },
     "CreateDeployment": {
@@ -79,11 +83,11 @@
         "ApplicationName.$": "$.detail.repository-name",
         "DeploymentGroupName.$": "$.detail.repository-name",
         "DeploymentConfigName": "CodeDeployDefault.LambdaAllAtOnce",
-        "Description.$": "States.Format('Updating {} to {}', $.detail.repository-name, $.detail.image-tag)",
+        "Description.$": "$.detail.repository-name",
         "Revision": {
           "RevisionType": "AppSpecContent",
           "AppSpecContent": {
-            "Content.$": "States.JsonToString({\"version\": 0.0, \"Resources\": [{\"myLambdaFunction\": {\"Type\": \"AWS::Lambda::Function\", \"Properties\": {\"Name\": $.detail.repository-name, \"Alias\": \"prd\", \"CurrentVersion\": $.PrdAlias.FunctionVersion, \"TargetVersion\": $.PublishVersion.Version}}}]})"
+            "Content.$": "$.repository-name"
           }
         }
       },
