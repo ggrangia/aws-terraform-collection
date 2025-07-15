@@ -29,13 +29,13 @@ module "deploy_lambda" {
   version = "8.0.1"
 
   function_name = "deploy_lambda"
-  description   = ""
+  description   = "This function is triggered by specific tags in ECR. It creates a new alias and deploys the new lambda image."
   handler       = "index.lambda_handler"
   runtime       = "python3.12"
 
   source_path = "./src/deploy_lambda/index.py"
 
-  layers  = ["arn:aws:lambda:${data.aws_region.current.name}:017000801446:layer:AWSLambdaPowertoolsPythonV2:65"]
+  layers  = ["arn:aws:lambda:${data.aws_region.current.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:65"]
   timeout = 60
 
   attach_policy_json = true
