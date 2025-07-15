@@ -13,19 +13,20 @@ resource "aws_iam_role" "apigw_resource_role" {
       }
     ]
   })
+}
 
-  inline_policy {
-    name = "${var.role_name}_invoke_private_policy"
+resource "aws_iam_role_policy" "example" {
+  name = "${var.role_name}_invoke_private_policy"
+  role = aws_iam_role.apigw_resource_role.name
 
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action   = ["lambda:InvokeFunction"]
-          Resource = var.lambda_arns
-          Effect   = "Allow"
-        }
-      ]
-    })
-  }
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = ["lambda:InvokeFunction"]
+        Resource = var.lambda_arns
+        Effect   = "Allow"
+      }
+    ]
+  })
 }

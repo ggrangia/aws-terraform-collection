@@ -13,7 +13,6 @@ Moreover, the repository shoud have the same names as the lambda function.
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 import json
-import os
 from boto3 import client
 import time
 
