@@ -29,7 +29,7 @@ resource "docker_registry_image" "authorizer" {
 
 module "authorizer" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "7.2.1"
+  version = "8.0.1"
 
   create         = true
   create_package = false

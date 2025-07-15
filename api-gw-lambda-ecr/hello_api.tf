@@ -29,7 +29,7 @@ resource "docker_registry_image" "hello_api" {
 
 module "hello_api" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "7.2.1"
+  version = "8.0.1"
 
   create         = true
   create_package = false

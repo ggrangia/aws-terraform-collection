@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "deploy_lambda" {
 
 module "deploy_lambda" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "7.2.1"
+  version = "8.0.1"
 
   function_name = "deploy_lambda"
   description   = ""
