@@ -68,22 +68,9 @@ repos:
           [
             "markdown",
             "table",
-            "--recursive",
             "--output-file",
             "README.md",
             "./tgw-shared-services/3_vpcs_acc2",
-          ]
-      - id: terraform-docs-go
-        args:
-          [
-            "markdown",
-            "table",
-            "--recursive",
-            "--recursive-include-main",
-            "false",
-            "--output-file",
-            "README.md",
-            "./tgw-shared-services",
           ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
