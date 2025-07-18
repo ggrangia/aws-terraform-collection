@@ -65,7 +65,7 @@ resource "aws_lambda_alias" "hello_api_prd" {
   function_version = module.hello_api.lambda_function_version
 
   lifecycle {
-    // Create the alias 
+    // Create the alias
     ignore_changes = [function_version]
   }
 }
@@ -75,4 +75,3 @@ module "hello_api_deployment" {
 
   lambda_name = module.hello_api.lambda_function_name
 }
-

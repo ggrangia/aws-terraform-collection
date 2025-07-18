@@ -1,5 +1,5 @@
 /*
-  Build the VPCs in account1 and make the Transit Gateway attachments  
+  Build the VPCs in account1 and make the Transit Gateway attachments
 */
 
 module "vpc" {
