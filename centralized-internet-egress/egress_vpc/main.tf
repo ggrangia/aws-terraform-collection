@@ -53,7 +53,7 @@ resource "aws_internet_gateway" "this" {
 }
 
 resource "aws_eip" "nat_eip" {
-  vpc        = true
+  domain     = "vpc"
   depends_on = [aws_internet_gateway.this]
 }
 
