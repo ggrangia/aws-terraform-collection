@@ -4,7 +4,7 @@ This project implements [Architecture for Centralized Internet Egress with NAT G
 
 The project is made of three modules:
 * Spoke VPC - all your workload VPCs
-* Egress VPC - central VPC that 
+* Egress VPC - central VPC that
 * Transit Gateway
 
 All the traffic towards the internet is routed from any Spoke VPC towards the Egress VPC passing through the Transit Gateway. No traffic is allowed between Spoke VPCs. This is achieved through the Transit Gateway Route Tables:
