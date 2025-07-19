@@ -25,6 +25,7 @@ In this example I used terraform docker provider, but it is totally possible to 
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.10 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_docker"></a> [docker](#requirement\_docker) | 3.6.2 |
 
@@ -32,7 +33,7 @@ In this example I used terraform docker provider, but it is totally possible to 
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.4.0 |
 | <a name="provider_docker"></a> [docker](#provider\_docker) | 3.6.2 |
 
 ## Modules
@@ -71,7 +72,6 @@ In this example I used terraform docker provider, but it is totally possible to 
 | [docker_registry_image.hello_api](https://registry.terraform.io/providers/kreuzwerker/docker/3.6.2/docs/resources/registry_image) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_ecr_authorization_token.token](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ecr_authorization_token) | data source |
-| [aws_iam_policy.aws_codedeploy_for_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy_document.apigw_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.apigw_cloudwatch](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.deploy_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |

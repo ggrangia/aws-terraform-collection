@@ -3,6 +3,7 @@
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.10 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 3.1.0 |
 
 ## Providers

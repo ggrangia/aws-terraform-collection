@@ -1,20 +1,23 @@
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.10 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.0.1 |
-| <a name="provider_aws.netmanager"></a> [aws.netmanager](#provider\_aws.netmanager) | 5.0.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
+| <a name="provider_aws.netmanager"></a> [aws.netmanager](#provider\_aws.netmanager) | 5.100.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda_tgw_rt_propagation"></a> [lambda\_tgw\_rt\_propagation](#module\_lambda\_tgw\_rt\_propagation) | terraform-aws-modules/lambda/aws | n/a |
+| <a name="module_lambda_tgw_rt_propagation"></a> [lambda\_tgw\_rt\_propagation](#module\_lambda\_tgw\_rt\_propagation) | terraform-aws-modules/lambda/aws | v7.21.1 |
 
 ## Resources
 

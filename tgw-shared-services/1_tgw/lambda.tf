@@ -1,5 +1,6 @@
 module "lambda_tgw_rt_propagation" {
-  source = "terraform-aws-modules/lambda/aws"
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "v7.21.1"
 
   function_name = "tgw_rt_propagation"
   description   = "Associate the attachmen with the TGW Rt specified in the tags and propagate it accordingly"

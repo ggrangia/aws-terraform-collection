@@ -1,7 +1,14 @@
-provider "aws" {
-  access_key = "test"
-  secret_key = "test"
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  required_version = "~> 1.10"
+}
 
+provider "aws" {
   region = "eu-west-1"
 
   default_tags {
@@ -14,9 +21,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias      = "ipam"
-  access_key = "test"
-  secret_key = "test"
+  alias = "ipam"
 
   region = "eu-west-1"
 

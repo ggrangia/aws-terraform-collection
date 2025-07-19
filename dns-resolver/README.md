@@ -34,23 +34,26 @@ IN the endpoints definition, the dynamic field might sometimes fail to show the 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.10 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.35.0 |
-| <a name="provider_aws.account1"></a> [aws.account1](#provider\_aws.account1) | 5.35.0 |
-| <a name="provider_aws.account2"></a> [aws.account2](#provider\_aws.account2) | 5.35.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
+| <a name="provider_aws.account1"></a> [aws.account1](#provider\_aws.account1) | 5.100.0 |
+| <a name="provider_aws.account2"></a> [aws.account2](#provider\_aws.account2) | 5.100.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_account1_vpc"></a> [account1\_vpc](#module\_account1\_vpc) | terraform-aws-modules/vpc/aws | n/a |
-| <a name="module_account2_vpc"></a> [account2\_vpc](#module\_account2\_vpc) | terraform-aws-modules/vpc/aws | n/a |
-| <a name="module_main_vpc"></a> [main\_vpc](#module\_main\_vpc) | terraform-aws-modules/vpc/aws | n/a |
+| <a name="module_account1_vpc"></a> [account1\_vpc](#module\_account1\_vpc) | terraform-aws-modules/vpc/aws | v5.21.0 |
+| <a name="module_account2_vpc"></a> [account2\_vpc](#module\_account2\_vpc) | terraform-aws-modules/vpc/aws | v5.21.0 |
+| <a name="module_main_vpc"></a> [main\_vpc](#module\_main\_vpc) | terraform-aws-modules/vpc/aws | v5.21.0 |
 
 ## Resources
 
@@ -87,9 +90,8 @@ No requirements.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_extra_fwd_rules"></a> [extra\_fwd\_rules](#input\_extra\_fwd\_rules) | n/a | `list` | <pre>[<br/>  {<br/>    "domain": "other.domain",<br/>    "ip": [<br/>      "35.53.11.110",<br/>      "35.53.12.110"<br/>    ],<br/>    "name": "other_domain"<br/>  },<br/>  {<br/>    "domain": "another.domain",<br/>    "ip": [<br/>      "1.1.1.1",<br/>      "2.2.2.2"<br/>    ],<br/>    "name": "another_domain"<br/>  }<br/>]</pre> | no |
+| <a name="input_extra_fwd_rules"></a> [extra\_fwd\_rules](#input\_extra\_fwd\_rules) | n/a | <pre>list(object({<br/>    name   = string<br/>    domain = string<br/>    ip     = list(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "domain": "other.domain",<br/>    "ip": [<br/>      "35.53.11.110",<br/>      "35.53.12.110"<br/>    ],<br/>    "name": "other_domain"<br/>  },<br/>  {<br/>    "domain": "another.domain",<br/>    "ip": [<br/>      "1.1.1.1",<br/>      "2.2.2.2"<br/>    ],<br/>    "name": "another_domain"<br/>  }<br/>]</pre> | no |
 | <a name="input_private_domain"></a> [private\_domain](#input\_private\_domain) | n/a | `string` | `"mydomain.mycloud"` | no |
-| <a name="input_private_network_cidr"></a> [private\_network\_cidr](#input\_private\_network\_cidr) | n/a | `string` | `"10.0.0.0/8"` | no |
 
 ## Outputs
 
