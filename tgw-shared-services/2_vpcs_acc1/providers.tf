@@ -1,8 +1,14 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  required_version = "~> 1.10"
+}
 
 provider "aws" {
-  access_key = ""
-  secret_key = ""
-
   region = "eu-west-1"
 
   default_tags {
@@ -15,9 +21,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias      = "tgw"
-  access_key = ""
-  secret_key = ""
+  alias = "tgw"
 
   region = "eu-west-1"
 
