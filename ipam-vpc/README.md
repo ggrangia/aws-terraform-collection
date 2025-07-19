@@ -26,14 +26,17 @@ I chose to explicitly assign 4 different CIDRs to my VPC. I did it because I wan
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.10 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_aws.ipam"></a> [aws.ipam](#provider\_aws.ipam) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
+| <a name="provider_aws.ipam"></a> [aws.ipam](#provider\_aws.ipam) | 5.100.0 |
 
 ## Modules
 
@@ -73,7 +76,6 @@ No modules.
 | <a name="input_cidr_pool"></a> [cidr\_pool](#input\_cidr\_pool) | n/a | `string` | `"10.64.0.0/10"` | no |
 | <a name="input_ipam_regions"></a> [ipam\_regions](#input\_ipam\_regions) | n/a | `list(string)` | <pre>[<br/>  "eu-west-1"<br/>]</pre> | no |
 | <a name="input_secondary_private_cidr"></a> [secondary\_private\_cidr](#input\_secondary\_private\_cidr) | n/a | `number` | `2` | no |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | n/a | `number` | `3` | no |
 
 ## Outputs
 

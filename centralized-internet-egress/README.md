@@ -28,14 +28,17 @@ The path back to the VPC:
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.10 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_aws.tgw"></a> [aws.tgw](#provider\_aws.tgw) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
+| <a name="provider_aws.tgw"></a> [aws.tgw](#provider\_aws.tgw) | 5.100.0 |
 
 ## Modules
 
@@ -62,7 +65,6 @@ No requirements.
 | [aws_route.default_route_pvt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route) | resource |
 | [aws_route.egress_backroute_pub](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route) | resource |
 | [aws_route.egress_backroute_pvt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route) | resource |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_organizations_organization.mine](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
 
 ## Inputs
@@ -72,7 +74,6 @@ No requirements.
 | <a name="input_egress_main_cidr"></a> [egress\_main\_cidr](#input\_egress\_main\_cidr) | n/a | `string` | `"10.80.1.64/26"` | no |
 | <a name="input_egress_public_cidr"></a> [egress\_public\_cidr](#input\_egress\_public\_cidr) | n/a | `string` | `"10.80.1.128/26"` | no |
 | <a name="input_spoke_main_cidr"></a> [spoke\_main\_cidr](#input\_spoke\_main\_cidr) | n/a | `string` | `"10.80.0.0/24"` | no |
-| <a name="input_spoke_public_cidr"></a> [spoke\_public\_cidr](#input\_spoke\_public\_cidr) | n/a | `string` | `"10.80.1.0/26"` | no |
 
 ## Outputs
 
