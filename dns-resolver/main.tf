@@ -1,6 +1,7 @@
 // This vpc will hold the DNS endpoint
 module "main_vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "v5.21.0"
 
   name                  = "main_vpc"
   cidr                  = "10.0.0.0/24"

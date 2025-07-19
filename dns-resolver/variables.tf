@@ -1,12 +1,14 @@
-variable "private_network_cidr" {
-  default = "10.0.0.0/8"
-}
-
 variable "private_domain" {
+  type    = string
   default = "mydomain.mycloud"
 }
 
 variable "extra_fwd_rules" {
+  type = list(object({
+    name   = string
+    domain = string
+    ip     = list(string)
+  }))
   default = [
     {
       name   = "other_domain"
