@@ -5,10 +5,7 @@ variable "ipam_regions" {
 
 variable "secondary_private_cidr" {
   default = 2
-}
-
-variable "subnets" {
-  default = 3
+  type    = number
 }
 
 variable "cidr_pool" {

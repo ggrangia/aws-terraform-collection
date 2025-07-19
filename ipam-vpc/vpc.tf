@@ -34,7 +34,7 @@ resource "aws_subnet" "pvt" {
 
   availability_zone = each.value
   vpc_id            = aws_vpc.test.id
-  cidr_block        = lookup(local.subnets_az, each.value)
+  cidr_block        = lookup(local.subnets_az, each.value, "")
 
   tags = {
     Name = "sub-pvt-${each.value}"
@@ -72,7 +72,7 @@ resource "aws_internet_gateway" "this" {
 }
 
 resource "aws_eip" "nat_eip" {
-  vpc        = true
+  domain     = "vpc"
   depends_on = [aws_internet_gateway.this]
 }
 
@@ -121,12 +121,12 @@ resource "aws_route" "nat" {
 
 resource "aws_route_table_association" "public" {
   for_each       = toset(data.aws_availability_zones.available.names)
-  subnet_id      = (lookup(aws_subnet.pub, each.value)).id
+  subnet_id      = (lookup(aws_subnet.pub, each.value, "")).id
   route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "private" {
   for_each       = toset(data.aws_availability_zones.available.names)
-  subnet_id      = (lookup(aws_subnet.pvt, each.value)).id
+  subnet_id      = (lookup(aws_subnet.pvt, each.value, "")).id
   route_table_id = aws_route_table.private.id
 }
