@@ -1,3 +1,8 @@
+locals {
+  egress_routeback_cidr = [var.spoke_main_cidr]
+}
+
+
 module "egress" {
   source = "./egress_vpc"
 

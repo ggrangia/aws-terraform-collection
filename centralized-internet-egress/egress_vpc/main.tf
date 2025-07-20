@@ -26,11 +26,11 @@ resource "aws_subnet" "tgw_eni" {
 }
 
 resource "aws_subnet" "pub" {
-  for_each = toset(data.aws_availability_zones.available.names)
+  for_each = toset(local.azs)
 
   availability_zone = each.value
   vpc_id            = aws_vpc.this.id
-  cidr_block        = cidrsubnet(aws_vpc_ipv4_cidr_block_association.public_cidr.cidr_block, 2, index(data.aws_availability_zones.available.names, each.value))
+  cidr_block        = cidrsubnet(aws_vpc_ipv4_cidr_block_association.public_cidr.cidr_block, 2, index(local.azs, each.value))
 
   map_public_ip_on_launch = true
 
@@ -101,13 +101,13 @@ resource "aws_route" "nat" {
 
 
 resource "aws_route_table_association" "public" {
-  for_each       = toset(data.aws_availability_zones.available.names)
+  for_each       = toset(local.azs)
   subnet_id      = (lookup(aws_subnet.pub, each.value, "")).id
   route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "tgw" {
-  for_each       = toset(data.aws_availability_zones.available.names)
+  for_each       = toset(local.azs)
   subnet_id      = (lookup(aws_subnet.tgw_eni, each.value, "")).id
   route_table_id = aws_route_table.private.id
 }
