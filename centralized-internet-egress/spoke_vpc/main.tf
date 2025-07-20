@@ -43,13 +43,13 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  for_each       = toset(data.aws_availability_zones.available.names)
+  for_each       = toset(local.azs)
   subnet_id      = (lookup(aws_subnet.pvt, each.value, "")).id
   route_table_id = aws_route_table.private.id
 }
 
 resource "aws_route_table_association" "tgw" {
-  for_each       = toset(data.aws_availability_zones.available.names)
+  for_each       = toset(local.azs)
   subnet_id      = (lookup(aws_subnet.tgw_eni, each.value, "")).id
   route_table_id = aws_route_table.private.id
 }
