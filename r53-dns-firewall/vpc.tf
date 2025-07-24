@@ -16,8 +16,8 @@ module "vpc" {
   secondary_cidr_blocks = [local.secondary_cidr]
 
   azs             = local.vpc_azs
-  private_subnets = [for k, v in local.local.vpc_azs : cidrsubnet(local.main_cidr, 2, k)]
-  public_subnets  = [for k, v in local.local.vpc_azs : cidrsubnet(local.secondary_cidr, 2, k)]
+  private_subnets = [for k, v in local.vpc_azs : cidrsubnet(local.main_cidr, 2, k)]
+  public_subnets  = [for k, v in local.vpc_azs : cidrsubnet(local.secondary_cidr, 2, k)]
 
   enable_vpn_gateway = false
 
