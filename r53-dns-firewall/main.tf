@@ -23,7 +23,7 @@ resource "aws_route53_resolver_firewall_rule_group" "aws_managed" {
 
 
 resource "aws_route53_resolver_firewall_rule_group" "custom" {
-  name = "AWSManaged"
+  name = "Custom"
 }
 
 resource "aws_route53_resolver_firewall_domain_list" "custom" {
@@ -61,4 +61,16 @@ resource "aws_route53_resolver_firewall_rule" "custom" {
   priority                = 100
 }
 
-// TODO: VPC associations
+resource "aws_route53_resolver_firewall_rule_group_association" "aws_managed" {
+  name                   = "aws_managed"
+  firewall_rule_group_id = aws_route53_resolver_firewall_rule_group.aws_managed.id
+  priority               = 100
+  vpc_id                 = module.vpc.vpc_id
+}
+
+resource "aws_route53_resolver_firewall_rule_group_association" "custom" {
+  name                   = "custom"
+  firewall_rule_group_id = aws_route53_resolver_firewall_rule_group.custom.id
+  priority               = 110
+  vpc_id                 = module.vpc.vpc_id
+}
