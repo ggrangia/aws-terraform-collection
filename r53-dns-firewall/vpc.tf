@@ -1,6 +1,6 @@
 locals {
   main_cidr      = "10.0.0.0/22"
-  secondary_cidr = "10.0.100.0/22"
+  secondary_cidr = "10.100.0.0/26"
   vpc_azs        = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 

@@ -27,10 +27,12 @@ resource "aws_route53_resolver_firewall_rule_group" "custom" {
 }
 
 resource "aws_route53_resolver_firewall_domain_list" "custom" {
-  name = "no_google"
+  name = "custom"
   domains = [
+    "google.com.",
     "*.google.com.",
-    "*.amazon.com."
+    "*.amazon.com.",
+    "amazon.com."
   ]
 }
 
@@ -64,7 +66,7 @@ resource "aws_route53_resolver_firewall_rule" "custom" {
 resource "aws_route53_resolver_firewall_rule_group_association" "aws_managed" {
   name                   = "aws_managed"
   firewall_rule_group_id = aws_route53_resolver_firewall_rule_group.aws_managed.id
-  priority               = 100
+  priority               = 101
   vpc_id                 = module.vpc.vpc_id
 }
 
