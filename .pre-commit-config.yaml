@@ -52,6 +52,16 @@ repos:
             "table",
             "--output-file",
             "README.md",
+            "./r53-dns-firewall",
+          ]
+
+      - id: terraform-docs-go
+        args:
+          [
+            "markdown",
+            "table",
+            "--output-file",
+            "README.md",
             "./tgw-shared-services/1_tgw",
           ]
       - id: terraform-docs-go
