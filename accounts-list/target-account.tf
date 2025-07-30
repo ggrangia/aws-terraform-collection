@@ -85,6 +85,13 @@ module "lambda_function" {
     "arn:aws:lambda:${data.aws_region.target.region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-${replace(var.python_version, ".", "")}-arm64:18",
   ]
 
+  allowed_triggers = {
+    alloworgcatchevent = {
+      principal  = "events.amazonaws.com"
+      source_arn = aws_cloudwatch_event_rule.aws_organizations_changes_capture_rule.arn
+    }
+  }
+
   environment_variables = {
     POWERTOOLS_SERVICE_NAME = "accounts-list"
     POWERTOOLS_LOG_LEVEL    = "INFO"
