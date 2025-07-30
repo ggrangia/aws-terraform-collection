@@ -27,20 +27,7 @@ resource "aws_cloudwatch_event_rule" "aws_organizations_changes_capture_rule" {
   name           = "aws-organizations-changes-capture-rule"
   description    = "EventBridge rule used to trigger Account Documentor pipeline upon AWS Organizations changes"
   event_bus_name = aws_cloudwatch_event_bus.aws_organizations_changes_capture_event_bus.name
-  event_pattern = jsonencode({
-    source = [
-      "aws.organizations"
-    ]
-    detail = {
-      eventName = [
-        "CreateAccountResult",
-        "CloseAccountResult",
-        "MoveAccount",
-        "RemoveAccountFromOrganization",
-        "AcceptHandshake"
-      ]
-    }
-  })
+  event_pattern  = jsonencode(local.org_event_pattern)
 }
 
 resource "aws_cloudwatch_event_target" "aws_cloudwatch_event_target_sqs" {
