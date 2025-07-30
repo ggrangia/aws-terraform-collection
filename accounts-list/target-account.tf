@@ -57,7 +57,6 @@ data "archive_file" "lambda_zip" {
   output_path = "${path.module}/src/accounts-list.zip"
 }
 
-# TODO: add eventbridge permission
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "~>8.0"
