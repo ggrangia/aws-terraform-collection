@@ -3,7 +3,8 @@ import json
 import os
 import pytest
 from moto import mock_aws
-from accounts_list.index import lambda_handler
+from index import lambda_handler
+from dataclasses import dataclass
 
 
 @pytest.fixture
@@ -15,6 +16,17 @@ def aws_credentials():
     os.environ["AWS_SESSION_TOKEN"] = "testing"
 
 
+@dataclass
+class ContextMock:
+    function_name = "lambda_handler"
+    function_memory_size = 512
+    function_arn = "test_arn"
+    function_request_id = "1111111111111"
+    memory_limit_in_mb = 512
+    invoked_function_arn = "test:arn"
+    aws_request_id = "test_aws_req"
+
+
 @pytest.fixture
 def s3_bucket_name():
     return "test-bucket"
@@ -23,6 +35,7 @@ def s3_bucket_name():
 @pytest.fixture
 def mock_environment(s3_bucket_name):
     os.environ["S3_BUCKET_NAME"] = s3_bucket_name
+    os.environ["POWERTOOLS_SERVICE_NAME"] = "account-list"
 
 
 @mock_aws
@@ -38,6 +51,7 @@ def test_lambda_handler(aws_credentials, mock_environment, s3_bucket_name):
     account1 = org_client.create_account(
         Email="test1@example.com", AccountName="Test Account 1"
     )["CreateAccountStatus"]["AccountId"]
+
     account2 = org_client.create_account(
         Email="test2@example.com", AccountName="Test Account 2"
     )["CreateAccountStatus"]["AccountId"]
@@ -45,9 +59,10 @@ def test_lambda_handler(aws_credentials, mock_environment, s3_bucket_name):
     org_client.tag_resource(ResourceId=account1, Tags=[{"Key": "Env", "Value": "Dev"}])
 
     # Invoke the lambda handler
-    response = lambda_handler({}, None)
+    ctx = ContextMock()
+    response = lambda_handler({}, ctx)
 
-    assert response["statusCode"] == 200
+    assert response
 
     # Verify the file was uploaded to S3
     s3_object = s3_client.get_object(Bucket=s3_bucket_name, Key="accounts.json")

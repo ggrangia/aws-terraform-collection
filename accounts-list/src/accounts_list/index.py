@@ -37,7 +37,7 @@ def get_account_tags(account_id):
 
 
 @logger.inject_lambda_context
-def lambda_handler(event: dict, context: LambdaContext) -> dict:
+def lambda_handler(event: dict, context: LambdaContext) -> bool:
     logger.info({"event": event})
 
     s3_bucket_name = os.environ.get("S3_BUCKET_NAME")
