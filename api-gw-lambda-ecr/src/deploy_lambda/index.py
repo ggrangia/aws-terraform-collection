@@ -10,11 +10,11 @@ Moreover, the repository shoud have the same names as the lambda function.
 5 - Wait for the deployment to finish
 """
 
-from aws_lambda_powertools import Logger
-from aws_lambda_powertools.utilities.typing import LambdaContext
 import json
-from boto3 import client
 import time
+
+from aws_lambda_powertools import Logger
+from boto3 import client
 
 logger = Logger()
 
@@ -66,7 +66,6 @@ def create_new_alias(repo_name, alias_tag_name, target_version, image_tag):
 
 @logger.inject_lambda_context
 def lambda_handler(event, context):
-
     logger.info(f"Event: {event}")
 
     repo_name = event["detail"][

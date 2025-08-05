@@ -18,10 +18,11 @@ Global                   | All
 *****************************************************************************
 """
 
-from aws_lambda_powertools import Logger
-from aws_lambda_powertools.utilities.typing import LambdaContext
 import json
 import os
+
+from aws_lambda_powertools import Logger
+from aws_lambda_powertools.utilities.typing import LambdaContext
 from boto3 import client
 
 logger = Logger()
