@@ -14,6 +14,7 @@ def aws_credentials():
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
+    os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
 
 @dataclass
@@ -38,25 +39,43 @@ def mock_environment(s3_bucket_name):
     os.environ["POWERTOOLS_SERVICE_NAME"] = "account-list"
 
 
+@pytest.fixture
+def setup_org(aws_credentials):
+    with mock_aws():
+        # Create a mock organization and accounts
+        org_client = boto3.client("organizations", region_name="us-east-1")
+        org_client.create_organization(FeatureSet="ALL")
+        account1 = org_client.create_account(
+            Email="test1@example.com", AccountName="Test Account 1"
+        )["CreateAccountStatus"]["AccountId"]
+
+        account2 = org_client.create_account(
+            Email="test2@example.com", AccountName="Test Account 2"
+        )["CreateAccountStatus"]["AccountId"]
+
+        org_client.tag_resource(
+            ResourceId=account1, Tags=[{"Key": "Env", "Value": "Dev"}]
+        )
+
+        yield {"org_client": org_client, "account1": account1, "account2": account2}
+
+
+@pytest.fixture
+def setup_s3(aws_credentials, s3_bucket_name):
+    with mock_aws():
+        s3_client = boto3.client("s3", region_name="us-east-1")
+        s3_client.create_bucket(Bucket=s3_bucket_name)
+
+        yield {"s3_client": s3_client}
+
+
 @mock_aws
-def test_lambda_handler(aws_credentials, mock_environment, s3_bucket_name):
-    # Create a mock S3 bucket
-    s3_client = boto3.client("s3", region_name="us-east-1")
-    s3_client.create_bucket(Bucket=s3_bucket_name)
+def test_lambda_handler(setup_org, setup_s3, s3_bucket_name, mock_environment):
 
-    # Create a mock organization and accounts
-    org_client = boto3.client("organizations", region_name="us-east-1")
-    org_client.create_organization(FeatureSet="ALL")
+    s3_client = setup_s3["s3_client"]
 
-    account1 = org_client.create_account(
-        Email="test1@example.com", AccountName="Test Account 1"
-    )["CreateAccountStatus"]["AccountId"]
-
-    account2 = org_client.create_account(
-        Email="test2@example.com", AccountName="Test Account 2"
-    )["CreateAccountStatus"]["AccountId"]
-
-    org_client.tag_resource(ResourceId=account1, Tags=[{"Key": "Env", "Value": "Dev"}])
+    account1 = setup_org["account1"]
+    account2 = setup_org["account2"]
 
     # Invoke the lambda handler
     ctx = ContextMock()
