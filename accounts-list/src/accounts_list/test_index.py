@@ -1,10 +1,11 @@
-import boto3
 import json
 import os
-import pytest
-from moto import mock_aws
-from index import lambda_handler, get_all_accounts
 from dataclasses import dataclass
+
+import boto3
+import pytest
+from index import get_all_accounts, lambda_handler
+from moto import mock_aws
 
 
 @pytest.fixture
@@ -71,7 +72,6 @@ def setup_s3(aws_credentials, s3_bucket_name):
 
 @mock_aws
 def test_lambda_handler(setup_org, setup_s3, s3_bucket_name, mock_environment):
-
     s3_client = setup_s3["s3_client"]
 
     account1 = setup_org["account1"]
