@@ -107,6 +107,8 @@ def test_lambda_handler(setup_org, setup_s3, s3_bucket_name, mock_environment):
 
 @mock_aws
 def test_get_all_accounts(setup_org, mock_environment):
-    got = get_all_accounts()
+    org_client = setup_org["org_client"]
+
+    got = get_all_accounts(client=org_client)
 
     assert len(got) == 3

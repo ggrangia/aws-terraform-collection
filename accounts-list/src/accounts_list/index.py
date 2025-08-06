@@ -7,11 +7,11 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 logger = Logger()
 
 
-def get_all_accounts():
+def get_all_accounts(client):
     """
     Retrieves all accounts in the AWS Organization.
     """
-    client = boto3.client("organizations")
+
     accounts = []
     paginator = client.get_paginator("list_accounts")
     page_iterator = paginator.paginate()
@@ -20,11 +20,10 @@ def get_all_accounts():
     return accounts
 
 
-def get_account_tags(account_id):
+def get_account_tags(account_id, client):
     """
     Retrieves tags for a specific AWS account.
     """
-    client = boto3.client("organizations")
     try:
         response = client.list_tags_for_resource(ResourceId=account_id)
         return response["Tags"]
@@ -40,16 +39,18 @@ def get_account_tags(account_id):
 def lambda_handler(event: dict, context: LambdaContext) -> bool:
     logger.info({"event": event})
 
+    org_client = boto3.client("organizations")
+
     s3_bucket_name = os.environ.get("S3_BUCKET_NAME")
     if not s3_bucket_name:
         logger.error("S3_BUCKET_NAME environment variable not set.")
         return False
 
-    accounts = get_all_accounts()
+    accounts = get_all_accounts(client=org_client)
     accounts_with_tags = []
 
     for account in accounts:
-        tags = get_account_tags(account["Id"])
+        tags = get_account_tags(account["Id"], client=org_client)
         account_info = {
             "Id": account["Id"],
             "Arn": account["Arn"],
