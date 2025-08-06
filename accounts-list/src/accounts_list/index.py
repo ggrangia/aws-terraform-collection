@@ -49,7 +49,6 @@ def lambda_handler(event: dict, context: LambdaContext) -> bool:
     accounts_with_tags = []
 
     for account in accounts:
-        # TODO: check tags
         tags = get_account_tags(account["Id"])
         account_info = {
             "Id": account["Id"],

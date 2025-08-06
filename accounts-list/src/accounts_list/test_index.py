@@ -3,7 +3,7 @@ import json
 import os
 import pytest
 from moto import mock_aws
-from index import lambda_handler
+from index import lambda_handler, get_all_accounts
 from dataclasses import dataclass
 
 
@@ -103,3 +103,10 @@ def test_lambda_handler(setup_org, setup_s3, s3_bucket_name, mock_environment):
 
     assert test_account_2_data["Name"] == "Test Account 2"
     assert len(test_account_2_data["Tags"]) == 0
+
+
+@mock_aws
+def test_get_all_accounts(setup_org, mock_environment):
+    got = get_all_accounts()
+
+    assert len(got) == 3
