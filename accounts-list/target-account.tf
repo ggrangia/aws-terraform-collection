@@ -67,6 +67,24 @@ module "lambda_function" {
   memory_size = 256
   timeout     = 60
 
+  attach_policy_statements = true
+  policy_statements = {
+    AllowS3PutObject = {
+      effect    = "Allow",
+      actions   = ["s3:PutObject"],
+      resources = ["arn:aws:s3:::${aws_s3_bucket.accounts_list_bucket}/*"]
+    }
+    AllowOrgRead = {
+      effect = "Allow",
+      actions = [
+        "organizations:ListAccounts",
+        "organizations:DescribeAccount",
+        "organizations:ListTagsForResource"
+      ],
+      resources = ["*"]
+    }
+  }
+
   layers = [
     "arn:aws:lambda:${data.aws_region.target.region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-${replace(var.python_version, ".", "")}-arm64:18",
   ]
@@ -82,4 +100,11 @@ module "lambda_function" {
     POWERTOOLS_SERVICE_NAME = "accounts-list"
     POWERTOOLS_LOG_LEVEL    = "INFO"
   }
+}
+
+
+resource "aws_s3_bucket" "accounts_list_bucket" {
+  provider = aws.target
+
+  bucket = "accounts_list_bucket"
 }

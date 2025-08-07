@@ -1,5 +1,7 @@
 [lint]
 select = [
+    # isort
+    "I",
     # pycodestyle
     "E",
     # Pyflakes
@@ -10,6 +12,4 @@ select = [
     "B",
     # flake8-simplify
     "SIM",
-    # isort
-    "I",
 ]
