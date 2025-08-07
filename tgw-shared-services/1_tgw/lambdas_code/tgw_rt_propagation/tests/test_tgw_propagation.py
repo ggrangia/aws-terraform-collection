@@ -1,12 +1,14 @@
+import json
+import os
+
+import pytest
 from index import (
+    associate_attachment,
     getTagValue,
     lambda_handler,
-    associate_attachment,
     propagate_attachment,
+    propagation_map,
 )
-from index import propagation_map
-import os, json
-import pytest
 
 
 class ContextMock:

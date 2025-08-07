@@ -1,10 +1,11 @@
 from index import ec2_client
-from moto.core import patch_client
 from moto import mock_ec2
+from moto.core import patch_client
 
 patch_client(ec2_client)
-import pytest
 import os
+
+import pytest
 
 
 @pytest.fixture(scope="function")

@@ -11,3 +11,4 @@ A collection of useful terraform tiny projects for your Organization
 - **Map Step Function**: (parallel-lambda-step-function) perform a set of operations (Lambda function) in parallel thanks to Step Function Map workflow
 - **API Gateway OpenAPI**: (api-gw-lambda-ecr) creates an API Gateway with an authorizer defined using OpenAPI spec and deploys lambdas with CodeDeploy
 - **R53 DNS Firewall**: (r53-dns-firewall) blocks unwanted DNS queries towards malicious domains
+- **Account List**: react to Org account changes and upload a json file to S3 containing the accounts and their tags (useful to avoid aws org api throttling)

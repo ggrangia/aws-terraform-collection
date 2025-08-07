@@ -4,6 +4,9 @@ repos:
     hooks:
       - id: terraform-docs-go
         args:
+          ["markdown", "table", "--output-file", "README.md", "./accounts-list"]
+      - id: terraform-docs-go
+        args:
           [
             "markdown",
             "table",
@@ -98,3 +101,13 @@ repos:
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.12.7
+    hooks:
+      # Run the linter.
+      - id: ruff-check
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
