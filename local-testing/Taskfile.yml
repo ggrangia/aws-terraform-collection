@@ -1,0 +1,56 @@
+version: "3"
+
+vars:
+  MOTO_PORT: 5000
+  MOTO_HOST: localhost
+  MOTO_URL: http://{{.MOTO_HOST}}:{{.MOTO_PORT}}
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  AWS_REGION: us-east-1
+
+tasks:
+  moto-server:
+    desc: Start Moto server
+    cmds:
+      - echo "Starting Moto server on port {{.MOTO_PORT}}..."
+      - moto_server -H {{.MOTO_HOST}} -p {{.MOTO_PORT}}
+    interactive: true
+
+  stop-moto-server:
+    desc: Stop Moto server (Windows only)
+    cmds:
+      - echo "Stopping Moto server..."
+      - taskkill /F /IM python.exe 2>nul || echo "Moto server not found or already stopped."
+
+  terraform-init:
+    desc: Terraform init
+    env:
+      AWS_ACCESS_KEY_ID: "{{.AWS_ACCESS_KEY_ID}}"
+      AWS_SECRET_ACCESS_KEY: "{{.AWS_SECRET_ACCESS_KEY}}"
+      AWS_REGION: "{{.AWS_REGION}}"
+    cmds:
+      - terraform init
+
+  terraform-plan:
+    desc: Terraform plan
+    env:
+      AWS_ACCESS_KEY_ID: "{{.AWS_ACCESS_KEY_ID}}"
+      AWS_SECRET_ACCESS_KEY: "{{.AWS_SECRET_ACCESS_KEY}}"
+      AWS_REGION: "{{.AWS_REGION}}"
+    cmds:
+      - terraform plan
+
+  terraform-apply:
+    desc: Terraform apply
+    env:
+      AWS_ACCESS_KEY_ID: "{{.AWS_ACCESS_KEY_ID}}"
+      AWS_SECRET_ACCESS_KEY: "{{.AWS_SECRET_ACCESS_KEY}}"
+      AWS_REGION: "{{.AWS_REGION}}"
+    cmds:
+      - terraform apply -auto-approve
+
+  test:
+    desc: Start Moto server and show test instructions
+    cmds:
+      - task: moto-server
+      - echo "Run 'task terraform-plan' or 'task terraform-apply' in another terminal while
