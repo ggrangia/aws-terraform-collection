@@ -31,6 +31,7 @@ tasks:
     cmds:
       - echo "Stopping Moto server Docker container..."
       - docker stop {{.MOTO_CONTAINER_NAME}} || echo "Moto server container not found or already stopped."
+      - docker rm {{.MOTO_CONTAINER_NAME}}  || echo "Moto server container not found or already stopped."
 
   terraform-init:
     desc: Terraform init
@@ -47,14 +48,15 @@ tasks:
     cmds:
       - terraform apply -auto-approve
 
+  terraform-test:
+    desc: Run Terraform tests
+    cmds:
+      - terraform test
+
   terraform-test-setup:
     desc: Setup Terraform and Moto server for local testing
     cmds:
-      - task: moto-server
+      - task: start-moto-server
       - task: terraform-init
-
-  test:
-    desc: Start Moto server in Docker and show test instructions
-    cmds:
-      - task: moto-server
-      - echo "Run 'task terraform-plan' or 'task terraform-apply' in another terminal while Moto is
+      - task: terraform-test
+      - task: stop-moto-server
