@@ -4,53 +4,57 @@ vars:
   MOTO_PORT: 5000
   MOTO_HOST: localhost
   MOTO_URL: http://{{.MOTO_HOST}}:{{.MOTO_PORT}}
+  MOTO_CONTAINER_NAME: moto-server
+
+env:
   AWS_ACCESS_KEY_ID: test
   AWS_SECRET_ACCESS_KEY: test
   AWS_REGION: us-east-1
+  AWS_ENDPOINT_URL: "{{ .MOTO_URL }}"
 
 tasks:
-  moto-server:
-    desc: Start Moto server
+  start-moto-server:
+    desc: Start Moto server in Docker
     cmds:
-      - echo "Starting Moto server on port {{.MOTO_PORT}}..."
-      - moto_server -H {{.MOTO_HOST}} -p {{.MOTO_PORT}}
-    interactive: true
+      - |
+        if [ "$(docker ps -q -f name={{.MOTO_CONTAINER_NAME}})" ]; then
+          echo "Moto server is already running.";
+        else
+          echo "Starting Moto server. in Docker on port {{.MOTO_PORT}}..."
+          docker run -d --name {{.MOTO_CONTAINER_NAME}} -p {{.MOTO_PORT}}:5000 motoserver/moto:latest
+        fi;
+      - echo "Moto server is running at {{.MOTO_URL}}"
+    interactive: false
 
   stop-moto-server:
-    desc: Stop Moto server (Windows only)
+    desc: Stop Moto server Docker container
     cmds:
-      - echo "Stopping Moto server..."
-      - taskkill /F /IM python.exe 2>nul || echo "Moto server not found or already stopped."
+      - echo "Stopping Moto server Docker container..."
+      - docker stop {{.MOTO_CONTAINER_NAME}} || echo "Moto server container not found or already stopped."
 
   terraform-init:
     desc: Terraform init
-    env:
-      AWS_ACCESS_KEY_ID: "{{.AWS_ACCESS_KEY_ID}}"
-      AWS_SECRET_ACCESS_KEY: "{{.AWS_SECRET_ACCESS_KEY}}"
-      AWS_REGION: "{{.AWS_REGION}}"
     cmds:
       - terraform init
 
   terraform-plan:
     desc: Terraform plan
-    env:
-      AWS_ACCESS_KEY_ID: "{{.AWS_ACCESS_KEY_ID}}"
-      AWS_SECRET_ACCESS_KEY: "{{.AWS_SECRET_ACCESS_KEY}}"
-      AWS_REGION: "{{.AWS_REGION}}"
     cmds:
       - terraform plan
 
   terraform-apply:
     desc: Terraform apply
-    env:
-      AWS_ACCESS_KEY_ID: "{{.AWS_ACCESS_KEY_ID}}"
-      AWS_SECRET_ACCESS_KEY: "{{.AWS_SECRET_ACCESS_KEY}}"
-      AWS_REGION: "{{.AWS_REGION}}"
     cmds:
       - terraform apply -auto-approve
 
-  test:
-    desc: Start Moto server and show test instructions
+  terraform-test-setup:
+    desc: Setup Terraform and Moto server for local testing
     cmds:
       - task: moto-server
-      - echo "Run 'task terraform-plan' or 'task terraform-apply' in another terminal while
+      - task: terraform-init
+
+  test:
+    desc: Start Moto server in Docker and show test instructions
+    cmds:
+      - task: moto-server
+      - echo "Run 'task terraform-plan' or 'task terraform-apply' in another terminal while Moto is
