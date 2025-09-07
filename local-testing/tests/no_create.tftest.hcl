@@ -11,11 +11,11 @@ run "create_bucket_plan" {
   command = plan
 
   variables {
-    create_bucket = true
+    create_bucket = false
   }
 
   assert {
-    condition     = startswith(output.s3_bucket_name, "some-bucket")
+    condition     = output.s3_bucket_name == null
     error_message = "Implement the tests and terraform main plan."
   }
 }
@@ -24,11 +24,11 @@ run "create_bucket_apply" {
   command = apply
 
   variables {
-    create_bucket = true
+    create_bucket = false
   }
 
   assert {
-    condition     = startswith(output.s3_bucket_name, "some-bucket")
+    condition     = output.s3_bucket_name == null
     error_message = "Implement the tests and terraform main apply."
   }
 }
