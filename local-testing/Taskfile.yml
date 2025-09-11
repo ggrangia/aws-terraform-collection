@@ -1,0 +1,62 @@
+version: "3"
+
+vars:
+  MOTO_PORT: 5000
+  MOTO_HOST: localhost
+  MOTO_URL: http://{{.MOTO_HOST}}:{{.MOTO_PORT}}
+  MOTO_CONTAINER_NAME: moto-server
+
+env:
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  AWS_REGION: us-east-1
+  AWS_ENDPOINT_URL: "{{ .MOTO_URL }}"
+
+tasks:
+  start-moto-server:
+    desc: Start Moto server in Docker
+    cmds:
+      - |
+        if [ "$(docker ps -q -f name={{.MOTO_CONTAINER_NAME}})" ]; then
+          echo "Moto server is already running.";
+        else
+          echo "Starting Moto server. in Docker on port {{.MOTO_PORT}}..."
+          docker run -d --name {{.MOTO_CONTAINER_NAME}} -p {{.MOTO_PORT}}:5000 motoserver/moto:latest
+        fi;
+      - echo "Moto server is running at {{.MOTO_URL}}"
+    interactive: false
+
+  stop-moto-server:
+    desc: Stop Moto server Docker container
+    cmds:
+      - echo "Stopping Moto server Docker container..."
+      - docker stop {{.MOTO_CONTAINER_NAME}} || echo "Moto server container not found or already stopped."
+      - docker rm {{.MOTO_CONTAINER_NAME}}  || echo "Moto server container not found or already stopped."
+
+  terraform-init:
+    desc: Terraform init
+    cmds:
+      - terraform init
+
+  terraform-plan:
+    desc: Terraform plan
+    cmds:
+      - terraform plan
+
+  terraform-apply:
+    desc: Terraform apply
+    cmds:
+      - terraform apply -auto-approve
+
+  terraform-test:
+    desc: Run Terraform tests
+    cmds:
+      - terraform test
+
+  terraform-test-setup:
+    desc: Setup Terraform and Moto server for local testing
+    cmds:
+      - task: start-moto-server
+      - task: terraform-init
+      - task: terraform-test
+      - task: stop-moto-server
