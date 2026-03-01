@@ -85,6 +85,9 @@ repos:
             "README.md",
             "./tgw-shared-services/3_vpcs_acc2",
           ]
+      - id: terraform-docs-go
+        args:
+          ["markdown", "table", "--output-file", "README.md", "./tgw-peering"]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
