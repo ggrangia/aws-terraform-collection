@@ -10,8 +10,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
-| <a name="provider_aws.netmanager"></a> [aws.netmanager](#provider\_aws.netmanager) | 5.100.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.33.0 |
+| <a name="provider_aws.netmanager"></a> [aws.netmanager](#provider\_aws.netmanager) | 6.33.0 |
 
 ## Modules
 
