@@ -201,6 +201,11 @@ resource "aws_ec2_transit_gateway_route" "to_uswest2" {
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.useast1_rt.id
   destination_cidr_block         = local.vpc2_cidr
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment.this.id
+
+  depends_on = [
+    aws_ec2_transit_gateway_peering_attachment.this,
+    aws_ec2_transit_gateway_peering_attachment_accepter.this
+  ]
 }
 
 resource "aws_ec2_transit_gateway_route" "to_useast1" {
@@ -209,6 +214,11 @@ resource "aws_ec2_transit_gateway_route" "to_useast1" {
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.uswest2_rt.id
   destination_cidr_block         = local.vpc1_cidr
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment_accepter.this.id
+
+  depends_on = [
+    aws_ec2_transit_gateway_peering_attachment.this,
+    aws_ec2_transit_gateway_peering_attachment_accepter.this
+  ]
 }
 
 # ------------------------------------------------------------------
