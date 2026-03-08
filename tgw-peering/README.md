@@ -16,13 +16,16 @@ Two EC2 instances (one in each VPC) are created with IAM/SSM roles to test conne
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.10 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.35.1 |
 
 ## Modules
 
@@ -73,5 +76,8 @@ No inputs.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_amazon_linux_ami_id_b_ip"></a> [amazon\_linux\_ami\_id\_b\_ip](#output\_amazon\_linux\_ami\_id\_b\_ip) | n/a |
+| <a name="output_amazon_linux_ami_id_ip"></a> [amazon\_linux\_ami\_id\_ip](#output\_amazon\_linux\_ami\_id\_ip) | n/a |
 <!-- END_TF_DOCS -->
