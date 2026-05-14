@@ -26,6 +26,10 @@ repos:
       - id: terraform-docs-go
         args:
           ["markdown", "table", "--output-file", "README.md", "./dns-resolver"]
+
+      - id: terraform-docs-go
+        args: ["markdown", "table", "--output-file", "README.md", "./eks-setup"]
+
       - id: terraform-docs-go
         args:
           [

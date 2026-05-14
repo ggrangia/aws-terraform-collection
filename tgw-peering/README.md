@@ -25,7 +25,7 @@ Two EC2 instances (one in each VPC) are created with IAM/SSM roles to test conne
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.35.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
 
 ## Modules
 
