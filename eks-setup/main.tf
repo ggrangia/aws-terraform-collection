@@ -20,10 +20,14 @@ module "eks" {
   subnet_ids               = local.eks_workload_subnet_ids
   control_plane_subnet_ids = local.eks_workload_subnet_ids
 
+  cloudwatch_log_group_retention_in_days = 30
+
   kubernetes_version = "1.35"
 
   endpoint_private_access = true
   endpoint_public_access  = true
+
+  enable_irsa = true
 
   enable_cluster_creator_admin_permissions = true
 
@@ -31,7 +35,14 @@ module "eks" {
     enabled = false
   }
 
-  // TODO: enabled_log_types
+  # enable all logs
+  enabled_log_types = [
+    "audit",
+    "api",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]
 
   create_node_iam_role       = false
   create_node_security_group = false
@@ -62,6 +73,8 @@ module "eks" {
       min_size     = 2
       max_size     = 3
       desired_size = 2
+
+      # iam_role_additional_policies = []  
 
       labels = {
         # Used to ensure Karpenter runs on nodes that it does not manage
