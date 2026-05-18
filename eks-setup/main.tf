@@ -89,3 +89,26 @@ module "eks" {
     "karpenter.sh/discovery" = local.name
   }
 }
+
+resource "helm_release" "argocd" {
+  name             = "argocd"
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argo-cd"
+  version          = "9.5.14"
+  namespace        = "argocd"
+  create_namespace = true
+
+  atomic          = true
+  cleanup_on_fail = false
+  timeout         = 300
+  wait            = false
+
+  values = [
+    file("${path.module}/argocd-values.yaml")
+  ]
+
+  depends_on = [
+    module.eks
+  ]
+}
+
